@@ -1,6 +1,9 @@
 {
-  "name": "agentctx",
+  "name": "@tqakdev/ctxlint",
   "version": "0.1.0",
+  "publishConfig": {
+    "access": "public"
+  },
   "description": "Linter, profiler, and coverage for AI agent context files (AGENTS.md, CLAUDE.md, .cursor/rules, copilot-instructions)",
   "type": "module",
   "license": "MIT",
