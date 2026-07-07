@@ -92,6 +92,19 @@ describe("monorepo subtree resolution", () => {
 });
 
 describe("discovery edge cases", () => {
+  it("rejects a nonexistent scan root with a clear error", async () => {
+    await expect(
+      runScan({ root: "/nonexistent-dir-ctxlint-test", userGlobalDir: null }),
+    ).rejects.toThrow(/is not a directory|does not exist/);
+  });
+
+  it("rejects a scan root that is a file, not a directory", async () => {
+    const file = path.join(fixtures, "messy-repo", "CLAUDE.md");
+    await expect(runScan({ root: file, userGlobalDir: null })).rejects.toThrow(
+      /is not a directory|does not exist/,
+    );
+  });
+
   it("classifies every fixture surface with the right kind and tools", async () => {
     const result = await scanFixture("messy-repo");
     const byPath = new Map(result.surfaces.map((s) => [s.path, s]));

@@ -29,16 +29,24 @@ export interface TreeState {
   reason?: string;
 }
 
+/** ctxlint's own outputs: changes to these must not block `fix --write`. */
+function isOwnArtifact(porcelainLine: string): boolean {
+  // Porcelain v1: two status chars + space, then the path ("old -> new" for renames).
+  const p = porcelainLine.slice(3);
+  return p === "ctxlint-fixes.md" || p.startsWith(".ctxlint-cache/");
+}
+
 /** `fix --write` requires a git repo with no modified tracked files. */
 export async function checkCleanTree(root: string): Promise<TreeState> {
   try {
     const { stdout } = await execa("git", ["status", "--porcelain", "--untracked-files=no"], {
       cwd: root,
     });
-    if (stdout.trim() !== "") {
+    const dirty = stdout.split("\n").filter((line) => line.trim() !== "" && !isOwnArtifact(line));
+    if (dirty.length > 0) {
       return {
         clean: false,
-        reason: `uncommitted changes to tracked files:\n${stdout.trim()}`,
+        reason: `uncommitted changes to tracked files:\n${dirty.join("\n")}`,
       };
     }
     return { clean: true };
@@ -54,6 +62,18 @@ export async function checkCleanTree(root: string): Promise<TreeState> {
 const CRITICAL_HEADING = "## Critical rules";
 
 /**
+ * Replace `find` only where it stands alone as a path — not embedded in a
+ * longer path token (`src/utils.ts` inside `src/utils.ts.orig` or
+ * `vendor/src/utils.ts` must survive a rename of `src/utils.ts`).
+ */
+function replaceStandalonePath(line: string, find: string, replaceWith: string): string {
+  const escaped = find.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+  const boundary = /[\w@./-]/.source;
+  const re = new RegExp(`(?<!${boundary})${escaped}(?!${boundary})`, "g");
+  return line.replace(re, () => replaceWith);
+}
+
+/**
  * Apply span edits to one file's content. Deterministic and pure:
  * replacements first (in place), then deletions bottom-up, then moved rules
  * inserted under a "Critical rules" section after the first H1.
@@ -64,7 +84,7 @@ export function applyEditsToContent(content: string, edits: SpanEdit[]): string 
   for (const edit of edits) {
     if (edit.type !== "replace" || !edit.find || edit.replaceWith === undefined) continue;
     for (let i = edit.span.startLine - 1; i <= edit.span.endLine - 1 && i < lines.length; i++) {
-      lines[i] = (lines[i] as string).split(edit.find).join(edit.replaceWith);
+      lines[i] = replaceStandalonePath(lines[i] as string, edit.find, edit.replaceWith);
     }
   }
 
@@ -95,10 +115,13 @@ export function applyEditsToContent(content: string, edits: SpanEdit[]): string 
     }
   }
 
-  // Collapse blank runs left behind by deletions.
+  // Collapse blank runs left behind by deletions — but never inside fenced
+  // code blocks, where blank lines are content, not formatting.
   const collapsed: string[] = [];
+  let inFence = false;
   for (const line of lines) {
-    if (line.trim() === "" && collapsed[collapsed.length - 1]?.trim() === "") continue;
+    if (/^\s*(?:```|~~~)/.test(line)) inFence = !inFence;
+    if (!inFence && line.trim() === "" && collapsed[collapsed.length - 1]?.trim() === "") continue;
     collapsed.push(line);
   }
   lines = collapsed;

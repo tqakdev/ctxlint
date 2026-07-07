@@ -100,6 +100,48 @@ describe("edit application", () => {
     expect(next).toContain("src/new.js");
     expect(next).not.toContain("src/old.js");
   });
+
+  it("replaces only standalone path occurrences, not longer paths containing them", () => {
+    const content = [
+      "# Title",
+      "",
+      "- Edit `src/utils.ts`; never touch `src/utils.ts.orig` or `vendor/src/utils.ts`.",
+    ].join("\n");
+    const next = applyEditsToContent(content, [
+      {
+        file: "f",
+        type: "replace",
+        span: { startLine: 3, endLine: 3 },
+        find: "src/utils.ts",
+        replaceWith: "src/helpers.ts",
+      },
+    ]);
+    expect(next).toContain("Edit `src/helpers.ts`");
+    expect(next).toContain("`src/utils.ts.orig`");
+    expect(next).toContain("`vendor/src/utils.ts`");
+  });
+
+  it("preserves consecutive blank lines inside fenced code blocks", () => {
+    const content = [
+      "# Title",
+      "",
+      "- delete me",
+      "",
+      "## Setup",
+      "",
+      "```bash",
+      "export A=1",
+      "",
+      "",
+      "export B=2",
+      "```",
+    ].join("\n");
+    const next = applyEditsToContent(content, [
+      { file: "f", type: "delete", span: { startLine: 3, endLine: 3 } },
+    ]);
+    expect(next).not.toContain("delete me");
+    expect(next).toContain("export A=1\n\n\nexport B=2");
+  });
 });
 
 describe("fix --write end to end (M3 acceptance)", () => {
@@ -142,6 +184,23 @@ describe("fix --write end to end (M3 acceptance)", () => {
     expect(outcome.refused).toContain("uncommitted changes");
     expect(outcome.applied).toEqual([]);
     expect(await readFile(path.join(dir, "CLAUDE.md"), "utf8")).toBe(dirtyContent);
+  }, 30000);
+
+  it("ignores ctxlint's own artifacts when checking for a clean tree", async () => {
+    const dir = await tempGitRepoFromMessy();
+    // A previous run's outputs, committed (easy to do with `git add -A`) …
+    await mkdir(path.join(dir, ".ctxlint-cache"), { recursive: true });
+    await writeFile(path.join(dir, ".ctxlint-cache/last-scan.json"), "{}\n", "utf8");
+    await writeFile(path.join(dir, "ctxlint-fixes.md"), "# old plan\n", "utf8");
+    await git(dir, "add", "-A");
+    await git(dir, "commit", "-qm", "commit ctxlint artifacts");
+    // … then modified again by a re-run must not block --write forever.
+    await writeFile(path.join(dir, ".ctxlint-cache/last-scan.json"), "{ }\n", "utf8");
+    await writeFile(path.join(dir, "ctxlint-fixes.md"), "# newer plan\n", "utf8");
+
+    const outcome = await runFix(dir, { write: true, userGlobalDir: null });
+    expect(outcome.refused).toBeUndefined();
+    expect(outcome.applied.length).toBeGreaterThan(0);
   }, 30000);
 
   it("refuses to write outside a git repository", async () => {

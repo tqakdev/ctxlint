@@ -1,3 +1,5 @@
+import type { Stats } from "node:fs";
+import { stat } from "node:fs/promises";
 import { type CtxlintConfig, DEFAULT_CONFIG } from "../config.js";
 import { analyzeBudget } from "./analyzers/budget.js";
 import { analyzeContradiction } from "./analyzers/contradiction.js";
@@ -40,6 +42,16 @@ export interface ScanResult {
 }
 
 export async function runScan(options: ScanOptions): Promise<ScanResult> {
+  let rootStat: Stats;
+  try {
+    rootStat = await stat(options.root);
+  } catch {
+    throw new Error(`${options.root} does not exist — nothing to scan.`);
+  }
+  if (!rootStat.isDirectory()) {
+    throw new Error(`${options.root} is not a directory — point ctxlint at a repo root.`);
+  }
+
   const config = options.config ?? DEFAULT_CONFIG;
   const {
     surfaces,

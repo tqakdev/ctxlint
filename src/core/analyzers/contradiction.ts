@@ -127,19 +127,24 @@ export function analyzeContradiction(
 ): Finding[] {
   if (rules.length > maxRules) return [];
 
-  const prepared = rules.map((rule) => ({
-    rule,
-    ruleShingles: shingles(normalizeWords(rule.text)),
-    sentences: splitSentences(rule.text)
-      .map(
-        (sentence): PreparedSentence => ({
-          sentence,
-          polarity: sentencePolarity(sentence),
-          bigrams: directiveCore(sentence),
-        }),
-      )
-      .filter((s) => s.polarity !== "none" && s.bigrams.size > 0),
-  }));
+  // Rules with no polarity-bearing sentence can never contradict anything —
+  // drop them before the O(n²) pair loop (and before shingling, which is the
+  // expensive part).
+  const prepared = rules
+    .map((rule) => ({
+      rule,
+      sentences: splitSentences(rule.text)
+        .map(
+          (sentence): PreparedSentence => ({
+            sentence,
+            polarity: sentencePolarity(sentence),
+            bigrams: directiveCore(sentence),
+          }),
+        )
+        .filter((s) => s.polarity !== "none" && s.bigrams.size > 0),
+    }))
+    .filter((p) => p.sentences.length > 0)
+    .map((p) => ({ ...p, ruleShingles: shingles(normalizeWords(p.rule.text)) }));
 
   const findings: Finding[] = [];
   const seenPairs = new Set<string>();
