@@ -15,17 +15,17 @@ skills. It answers the questions nobody can currently answer about their repo:
 
 ## Install
 
-The npm package is **`ctxaudit`**; the command it installs is **`ctxlint`**.
+The npm package is **`agentctx`**; the command it installs is **`ctxlint`**.
 
 ```sh
-npx ctxaudit scan          # one-off, no install
-npm i -g ctxaudit          # then run `ctxlint` anywhere
+npx agentctx scan          # one-off, no install
+npm i -g agentctx          # then run `ctxlint` anywhere
 ```
 
 ## Quickstart (30 seconds)
 
 ```sh
-npx ctxaudit scan
+npx agentctx scan
 ```
 
 That's it — no config needed. You get a Context Health Score (0–100), a per-tool table

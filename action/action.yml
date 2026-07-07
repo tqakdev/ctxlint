@@ -41,8 +41,8 @@ runs:
       shell: bash
       working-directory: ${{ inputs.path }}
       run: |
-        npx --yes "ctxaudit@${{ inputs.version }}" scan --format md --output ctxlint-report.md
-        npx --yes "ctxaudit@${{ inputs.version }}" scan --format json --output ctxlint-report.json
+        npx --yes "agentctx@${{ inputs.version }}" scan --format md --output ctxlint-report.md
+        npx --yes "agentctx@${{ inputs.version }}" scan --format json --output ctxlint-report.json
         errors="$(jq '[.findings[] | select(.severity == "error")] | length' ctxlint-report.json)"
         score="$(jq '.score.total' ctxlint-report.json)"
         echo "errors=${errors}" >> "$GITHUB_OUTPUT"

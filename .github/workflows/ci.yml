@@ -24,10 +24,10 @@ jobs:
         run: |
           pnpm pack
           WORKDIR="$(mktemp -d)"
-          cp ctxaudit-*.tgz "$WORKDIR/"
+          cp agentctx-*.tgz "$WORKDIR/"
           cp -R test/fixtures/messy-repo "$WORKDIR/target"
           cd "$WORKDIR"
           npm init -y > /dev/null
-          npm install --no-fund --no-audit ./ctxaudit-*.tgz > /dev/null
-          npx ctxaudit scan target --format json --output report.json
+          npm install --no-fund --no-audit ./agentctx-*.tgz > /dev/null
+          npx agentctx scan target --format json --output report.json
           node -e "const r=require('./report.json'); if (typeof r.score.total !== 'number') process.exit(1); console.log('packed CLI OK — score', r.score.total)"
