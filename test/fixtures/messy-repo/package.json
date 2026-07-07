@@ -1,0 +1,14 @@
+{
+  "name": "acme-orders",
+  "version": "4.7.2",
+  "private": true,
+  "scripts": {
+    "start": "node src/index.js",
+    "test": "node --test test/",
+    "migrate": "node scripts/migrate.js"
+  },
+  "dependencies": {
+    "express": "^4.19.0",
+    "pg": "^8.11.0"
+  }
+}

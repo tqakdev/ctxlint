@@ -1,0 +1,7 @@
+---
+description: Repo-wide editor rules
+alwaysApply: true
+---
+
+- Format on save with the workspace Biome config; do not hand-format code.
+- Let the editor sort imports; do not reorder import blocks by hand.

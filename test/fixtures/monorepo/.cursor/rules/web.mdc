@@ -1,0 +1,10 @@
+---
+description: Storefront component rules
+globs: ["packages/web/**"]
+alwaysApply: false
+---
+
+- Components use function declarations, not arrow constants, so stack traces stay
+  readable.
+- Tailwind utility classes only; no CSS modules in new components.
+- Data fetching happens in route loaders, not in component bodies.

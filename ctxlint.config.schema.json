@@ -1,0 +1,100 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/ctxlint/ctxlint/main/ctxlint.config.schema.json",
+  "title": "ctxlint configuration",
+  "description": "Configuration for ctxlint (ctxlint.config.json). Every option has a default; only set what you need to change.",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "$schema": { "type": "string" },
+    "budgets": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "surfaceWarnTokens": {
+          "type": "number",
+          "default": 1500,
+          "description": "Warn when a single context file exceeds this many estimated tokens."
+        },
+        "effectiveContextWarnTokens": {
+          "type": "number",
+          "default": 4000,
+          "description": "Warn when one tool's effective context exceeds this many estimated tokens."
+        },
+        "buriedRuleDepthRatio": {
+          "type": "number",
+          "default": 0.7,
+          "description": "Rules deeper than this fraction of an oversized file are flagged as likely lost in long sessions."
+        }
+      }
+    },
+    "discovery": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "maxFiles": {
+          "type": "number",
+          "default": 20000,
+          "description": "Hard cap on files walked during discovery (also settable via --max-files)."
+        },
+        "maxSurfaceBytes": {
+          "type": "number",
+          "default": 1048576,
+          "description": "Context files larger than this are skipped with a warn finding."
+        }
+      }
+    },
+    "analysis": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "maxRules": {
+          "type": "number",
+          "default": 5000,
+          "description": "Pairwise analyzers bail gracefully above this rule count."
+        }
+      }
+    },
+    "compliance": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "model": {
+          "type": "string",
+          "default": "claude-haiku-4-5",
+          "description": "Judge model id used by `ctxlint compliance`."
+        },
+        "calibrationModel": {
+          "type": "string",
+          "default": "claude-sonnet-5",
+          "description": "Second model used by --calibrate for agreement checks."
+        },
+        "commits": {
+          "type": "number",
+          "default": 30,
+          "description": "Number of recent merged changes to sample."
+        },
+        "concurrency": {
+          "type": "number",
+          "default": 4,
+          "description": "Max concurrent judge requests."
+        },
+        "spendCapUsd": {
+          "type": "number",
+          "default": 1,
+          "description": "Require --yes when the estimated API spend exceeds this (USD)."
+        },
+        "calibrationSampleRatio": {
+          "type": "number",
+          "default": 0.1,
+          "description": "Fraction of verdicts re-judged during --calibrate."
+        },
+        "agreementWarnThreshold": {
+          "type": "number",
+          "default": 0.8,
+          "description": "Below this agreement, per-rule scores are reported as directional only."
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,22 @@
+---
+description: Code style and API rules for acme-orders
+globs: ["src/**/*.js"]
+alwaysApply: true
+---
+
+# Style rules
+
+- Use 2-space indentation. Semicolons required. Single quotes for strings.
+- Always use named exports in shared modules. Never use default exports anywhere in
+  this codebase.
+- Keep functions under 50 lines. Extract helpers rather than adding nesting.
+- No lodash. Modern JavaScript covers everything we used it for.
+
+# API rules
+
+All API route handlers must validate request bodies with the schemas in `src/schemas/`
+before touching the database. Return a 400 with the validation error message when
+validation fails. Never trust client input, even from internal services.
+
+- Every endpoint returns JSON, even errors. Error shape is `{ error: string }`.
+- All timestamps in responses are ISO 8601 UTC with a trailing `Z`.

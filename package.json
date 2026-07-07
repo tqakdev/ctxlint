@@ -1,0 +1,56 @@
+{
+  "name": "ctxlint",
+  "version": "0.1.0",
+  "description": "Linter, profiler, and coverage for AI agent context files (AGENTS.md, CLAUDE.md, .cursor/rules, copilot-instructions)",
+  "type": "module",
+  "license": "MIT",
+  "engines": {
+    "node": ">=20"
+  },
+  "bin": {
+    "ctxlint": "dist/cli.js"
+  },
+  "files": [
+    "dist",
+    "ctxlint.config.schema.json"
+  ],
+  "keywords": [
+    "agents",
+    "claude",
+    "cursor",
+    "copilot",
+    "lint",
+    "context",
+    "AGENTS.md",
+    "CLAUDE.md"
+  ],
+  "scripts": {
+    "build": "tsc -p tsconfig.build.json",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "lint": "biome check .",
+    "format": "biome format --write ."
+  },
+  "packageManager": "pnpm@11.10.0",
+  "dependencies": {
+    "@anthropic-ai/sdk": "^0.110.0",
+    "commander": "^15.0.0",
+    "execa": "^9.6.1",
+    "fast-glob": "^3.3.3",
+    "gray-matter": "^4.0.3",
+    "js-tiktoken": "^1.0.21",
+    "picocolors": "^1.1.1",
+    "remark-parse": "^11.0.0",
+    "unified": "^11.0.5"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "^2.5.2",
+    "@types/mdast": "^4.0.4",
+    "@types/node": "^26.1.0",
+    "@types/unist": "^3.0.3",
+    "tsx": "^4.23.0",
+    "typescript": "^6.0.3",
+    "vitest": "^4.1.9"
+  }
+}

@@ -1,0 +1,6 @@
+You are working on acme-orders, an Express order intake service.
+
+- Use 2-space indentation and single quotes.
+- Run npm test before pushing.
+- Route handlers live in src/routes/, one file per resource.
+- Never log request bodies; orders contain customer PII.

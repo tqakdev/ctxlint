@@ -1,0 +1,9 @@
+---
+globs: ["src/**
+alwaysApply: yes
+description: testing rules
+--
+# Testing rules
+
+- Every bug fix needs a regression test.
+- Snapshot tests are banned.

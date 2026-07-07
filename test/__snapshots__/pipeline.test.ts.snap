@@ -1,0 +1,455 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`M1 pipeline snapshots > clean-repo 1`] = `
+{
+  "contexts": [
+    {
+      "alwaysOnTokens": 275,
+      "conditionalTokens": 0,
+      "dir": ".",
+      "files": [
+        "1. AGENTS.md",
+      ],
+      "tool": "claude-code",
+    },
+    {
+      "alwaysOnTokens": 275,
+      "conditionalTokens": 0,
+      "dir": ".",
+      "files": [
+        "1. AGENTS.md",
+      ],
+      "tool": "cursor",
+    },
+    {
+      "alwaysOnTokens": 275,
+      "conditionalTokens": 0,
+      "dir": ".",
+      "files": [
+        "1. AGENTS.md",
+      ],
+      "tool": "copilot",
+    },
+    {
+      "alwaysOnTokens": 275,
+      "conditionalTokens": 0,
+      "dir": ".",
+      "files": [
+        "1. AGENTS.md",
+      ],
+      "tool": "codex",
+    },
+    {
+      "alwaysOnTokens": 275,
+      "conditionalTokens": 0,
+      "dir": ".",
+      "files": [
+        "1. AGENTS.md",
+      ],
+      "tool": "generic-agents-md",
+    },
+  ],
+  "findings": [],
+  "score": {
+    "subscores": {
+      "budget": 100,
+      "consistency": 100,
+      "freshness": 100,
+      "structure": 100,
+      "uniqueness": 100,
+    },
+    "total": 100,
+  },
+  "surfaces": [
+    {
+      "kind": "agents-md",
+      "path": "AGENTS.md",
+      "scope": "repo-root",
+      "tokens": 275,
+      "tools": [
+        "claude-code",
+        "cursor",
+        "copilot",
+        "codex",
+        "generic-agents-md",
+      ],
+    },
+  ],
+}
+`;
+
+exports[`M1 pipeline snapshots > messy-repo 1`] = `
+{
+  "contexts": [
+    {
+      "alwaysOnTokens": 2812,
+      "conditionalTokens": 0,
+      "dir": ".",
+      "files": [
+        "1. CLAUDE.md",
+      ],
+      "tool": "claude-code",
+    },
+    {
+      "alwaysOnTokens": 184,
+      "conditionalTokens": 37,
+      "dir": ".",
+      "files": [
+        "1. .cursor/rules/broken.mdc (conditional)",
+        "2. .cursor/rules/style.mdc",
+      ],
+      "tool": "cursor",
+    },
+    {
+      "alwaysOnTokens": 210,
+      "conditionalTokens": 0,
+      "dir": ".",
+      "files": [
+        "1. .github/copilot-instructions.md",
+      ],
+      "tool": "copilot",
+    },
+    {
+      "alwaysOnTokens": 0,
+      "conditionalTokens": 0,
+      "dir": ".",
+      "files": [],
+      "tool": "codex",
+    },
+    {
+      "alwaysOnTokens": 0,
+      "conditionalTokens": 0,
+      "dir": ".",
+      "files": [],
+      "tool": "generic-agents-md",
+    },
+  ],
+  "findings": [
+    "[error][duplication] Same rule maintained twice for different tools: .cursor/rules/style.mdc:10-11 and CLAUDE.md:65-66 are 100% identical. Keep one canonical copy (prefer AGENTS.md) and delete the other.",
+    "[error][duplication] Same rule maintained twice for different tools: .cursor/rules/style.mdc:12-12 and CLAUDE.md:69-69 are 100% identical. Keep one canonical copy (prefer AGENTS.md) and delete the other.",
+    "[error][duplication] Same rule maintained twice for different tools: .cursor/rules/style.mdc:13-13 and CLAUDE.md:70-70 are 100% identical. Keep one canonical copy (prefer AGENTS.md) and delete the other.",
+    "[error][duplication] Same rule maintained twice for different tools: .cursor/rules/style.mdc:17-19 and CLAUDE.md:56-58 are 100% identical. Keep one canonical copy (prefer AGENTS.md) and delete the other.",
+    "[error][duplication] Same rule maintained twice for different tools: .cursor/rules/style.mdc:9-9 and CLAUDE.md:62-62 are 100% identical. Keep one canonical copy (prefer AGENTS.md) and delete the other.",
+    "[error][duplication] Same rule maintained twice for different tools: .cursorrules:3-3 and .github/copilot-instructions.md:21-21 are 100% identical. Keep one canonical copy (prefer AGENTS.md) and delete the other.",
+    "[error][stale-reference] .github/copilot-instructions.md:16-17 references \`dashboard/components/\` which does not exist — actively misleading the agent. Update the reference or delete the rule.",
+    "[error][stale-reference] CLAUDE.md:139-140 references \`.env.example\` which does not exist — actively misleading the agent. Update the reference or delete the rule.",
+    "[error][stale-reference] CLAUDE.md:16-17 references \`docs/architecture.md\` which does not exist — actively misleading the agent. Update the reference or delete the rule.",
+    "[error][stale-reference] CLAUDE.md:22-22 references \`.env.example\` which does not exist — actively misleading the agent. Update the reference or delete the rule.",
+    "[error][stale-reference] CLAUDE.md:24-24 references \`scripts/seed-db.sh\` which does not exist — actively misleading the agent. Update the reference or delete the rule.",
+    "[error][stale-reference] CLAUDE.md:32-32 references the npm script "lint" which does not exist — actively misleading the agent. Update the reference or delete the rule.",
+    "[error][stale-reference] CLAUDE.md:33-34 references the npm script "typecheck" which does not exist — actively misleading the agent. Update the reference or delete the rule.",
+    "[error][stale-reference] CLAUDE.md:45-49 references \`src/api/v1/\` which does not exist — actively misleading the agent. Update the reference or delete the rule.",
+    "[error][stale-reference] CLAUDE.md:51-54 references \`src/utils/date-helpers.js\` which does not exist — actively misleading the agent. Update the reference or delete the rule.",
+    "[warn][budget] 9 critical rule(s) buried past 70% depth of an oversized file (CLAUDE.md, deepest at line 217 = 99%) — likely lost in long sessions. Move critical rules to the front.",
+    "[warn][budget] CLAUDE.md is ≈2812 estimated tokens (budget: 1500) — it is injected on every request for claude-code. Trim it or split rarely-needed sections into on-demand docs.",
+    "[warn][contradiction] Contradictory instructions about the same thing: .cursor/rules/style.mdc:10-11 says one polarity, .github/copilot-instructions.md:14-15 the opposite. An agent reading both will follow whichever it saw last — pick one. (Polarity heuristic is English-only.)",
+    "[warn][contradiction] Contradictory instructions about the same thing: .github/copilot-instructions.md:14-15 says one polarity, CLAUDE.md:65-66 the opposite. An agent reading both will follow whichever it saw last — pick one. (Polarity heuristic is English-only.)",
+    "[warn][drift] These rules started identical and diverged (66% similar): .github/copilot-instructions.md:7-8 vs CLAUDE.md:104-105. Decide which is right and align them.",
+    "[warn][structure] .cursor/rules/broken.mdc:1 has broken frontmatter (unexpected end of the stream within a double quoted scalar at line 10, column 1:) — Cursor cannot read its activation config (globs/alwaysApply), so these rules may never load. Fix the YAML.",
+    "[info][load-semantics] .cursorrules is read by no tool ctxlint knows (legacy format; treated as not loaded — assumed). Its rules have no effect: migrate them into .cursor/rules/*.mdc or AGENTS.md, then delete this file.",
+    "[info][structure] 5 per-tool context files (.cursor/rules/broken.mdc, .cursor/rules/style.mdc, .cursorrules, .github/copilot-instructions.md, CLAUDE.md) overlap by only 1% — they are separate documents that will keep drifting. Consolidate shared rules into AGENTS.md (every tool here reads it) and keep only tool-specific notes per file.",
+  ],
+  "score": {
+    "subscores": {
+      "budget": 80,
+      "consistency": 70,
+      "freshness": 0,
+      "structure": 82,
+      "uniqueness": 0,
+    },
+    "total": 42,
+  },
+  "surfaces": [
+    {
+      "kind": "cursor-rule",
+      "path": ".cursor/rules/broken.mdc",
+      "scope": "repo-root",
+      "tokens": 37,
+      "tools": [
+        "cursor",
+      ],
+    },
+    {
+      "kind": "cursor-rule",
+      "path": ".cursor/rules/style.mdc",
+      "scope": "repo-root",
+      "tokens": 184,
+      "tools": [
+        "cursor",
+      ],
+    },
+    {
+      "kind": "other",
+      "path": ".cursorrules",
+      "scope": "repo-root",
+      "tokens": 56,
+      "tools": [],
+    },
+    {
+      "kind": "copilot-instructions",
+      "path": ".github/copilot-instructions.md",
+      "scope": "repo-root",
+      "tokens": 210,
+      "tools": [
+        "copilot",
+      ],
+    },
+    {
+      "kind": "claude-md",
+      "path": "CLAUDE.md",
+      "scope": "repo-root",
+      "tokens": 2812,
+      "tools": [
+        "claude-code",
+      ],
+    },
+  ],
+}
+`;
+
+exports[`M1 pipeline snapshots > monorepo 1`] = `
+{
+  "contexts": [
+    {
+      "alwaysOnTokens": 182,
+      "conditionalTokens": 0,
+      "dir": ".",
+      "files": [
+        "1. AGENTS.md",
+      ],
+      "tool": "claude-code",
+    },
+    {
+      "alwaysOnTokens": 274,
+      "conditionalTokens": 0,
+      "dir": "packages/api",
+      "files": [
+        "1. AGENTS.md",
+        "2. packages/api/AGENTS.md",
+      ],
+      "tool": "claude-code",
+    },
+    {
+      "alwaysOnTokens": 359,
+      "conditionalTokens": 0,
+      "dir": "packages/web",
+      "files": [
+        "1. packages/web/CLAUDE.md",
+        "2. AGENTS.md",
+        "3. packages/web/AGENTS.md",
+      ],
+      "tool": "claude-code",
+    },
+    {
+      "alwaysOnTokens": 228,
+      "conditionalTokens": 67,
+      "dir": ".",
+      "files": [
+        "1. AGENTS.md",
+        "2. .cursor/rules/repo.mdc",
+        "3. .cursor/rules/web.mdc (conditional)",
+      ],
+      "tool": "cursor",
+    },
+    {
+      "alwaysOnTokens": 320,
+      "conditionalTokens": 67,
+      "dir": "packages/api",
+      "files": [
+        "1. AGENTS.md",
+        "2. packages/api/AGENTS.md",
+        "3. .cursor/rules/repo.mdc",
+        "4. .cursor/rules/web.mdc (conditional)",
+      ],
+      "tool": "cursor",
+    },
+    {
+      "alwaysOnTokens": 326,
+      "conditionalTokens": 67,
+      "dir": "packages/web",
+      "files": [
+        "1. AGENTS.md",
+        "2. packages/web/AGENTS.md",
+        "3. .cursor/rules/repo.mdc",
+        "4. .cursor/rules/web.mdc (conditional)",
+      ],
+      "tool": "cursor",
+    },
+    {
+      "alwaysOnTokens": 182,
+      "conditionalTokens": 0,
+      "dir": ".",
+      "files": [
+        "1. AGENTS.md",
+      ],
+      "tool": "copilot",
+    },
+    {
+      "alwaysOnTokens": 274,
+      "conditionalTokens": 0,
+      "dir": "packages/api",
+      "files": [
+        "1. AGENTS.md",
+        "2. packages/api/AGENTS.md",
+      ],
+      "tool": "copilot",
+    },
+    {
+      "alwaysOnTokens": 280,
+      "conditionalTokens": 0,
+      "dir": "packages/web",
+      "files": [
+        "1. AGENTS.md",
+        "2. packages/web/AGENTS.md",
+      ],
+      "tool": "copilot",
+    },
+    {
+      "alwaysOnTokens": 182,
+      "conditionalTokens": 0,
+      "dir": ".",
+      "files": [
+        "1. AGENTS.md",
+      ],
+      "tool": "codex",
+    },
+    {
+      "alwaysOnTokens": 274,
+      "conditionalTokens": 0,
+      "dir": "packages/api",
+      "files": [
+        "1. AGENTS.md",
+        "2. packages/api/AGENTS.md",
+      ],
+      "tool": "codex",
+    },
+    {
+      "alwaysOnTokens": 280,
+      "conditionalTokens": 0,
+      "dir": "packages/web",
+      "files": [
+        "1. AGENTS.md",
+        "2. packages/web/AGENTS.md",
+      ],
+      "tool": "codex",
+    },
+    {
+      "alwaysOnTokens": 182,
+      "conditionalTokens": 0,
+      "dir": ".",
+      "files": [
+        "1. AGENTS.md",
+      ],
+      "tool": "generic-agents-md",
+    },
+    {
+      "alwaysOnTokens": 274,
+      "conditionalTokens": 0,
+      "dir": "packages/api",
+      "files": [
+        "1. AGENTS.md",
+        "2. packages/api/AGENTS.md",
+      ],
+      "tool": "generic-agents-md",
+    },
+    {
+      "alwaysOnTokens": 280,
+      "conditionalTokens": 0,
+      "dir": "packages/web",
+      "files": [
+        "1. AGENTS.md",
+        "2. packages/web/AGENTS.md",
+      ],
+      "tool": "generic-agents-md",
+    },
+  ],
+  "findings": [],
+  "score": {
+    "subscores": {
+      "budget": 100,
+      "consistency": 100,
+      "freshness": 100,
+      "structure": 100,
+      "uniqueness": 100,
+    },
+    "total": 100,
+  },
+  "surfaces": [
+    {
+      "kind": "skill",
+      "path": ".claude/skills/deploy/SKILL.md",
+      "scope": "repo-root",
+      "tokens": 50,
+      "tools": [
+        "claude-code",
+      ],
+    },
+    {
+      "kind": "cursor-rule",
+      "path": ".cursor/rules/repo.mdc",
+      "scope": "repo-root",
+      "tokens": 46,
+      "tools": [
+        "cursor",
+      ],
+    },
+    {
+      "kind": "cursor-rule",
+      "path": ".cursor/rules/web.mdc",
+      "scope": "repo-root",
+      "tokens": 67,
+      "tools": [
+        "cursor",
+      ],
+    },
+    {
+      "kind": "agents-md",
+      "path": "AGENTS.md",
+      "scope": "repo-root",
+      "tokens": 182,
+      "tools": [
+        "claude-code",
+        "cursor",
+        "copilot",
+        "codex",
+        "generic-agents-md",
+      ],
+    },
+    {
+      "kind": "agents-md",
+      "path": "packages/api/AGENTS.md",
+      "scope": "subtree",
+      "tokens": 92,
+      "tools": [
+        "claude-code",
+        "cursor",
+        "copilot",
+        "codex",
+        "generic-agents-md",
+      ],
+    },
+    {
+      "kind": "agents-md",
+      "path": "packages/web/AGENTS.md",
+      "scope": "subtree",
+      "tokens": 98,
+      "tools": [
+        "claude-code",
+        "cursor",
+        "copilot",
+        "codex",
+        "generic-agents-md",
+      ],
+    },
+    {
+      "kind": "claude-md",
+      "path": "packages/web/CLAUDE.md",
+      "scope": "subtree",
+      "tokens": 79,
+      "tools": [
+        "claude-code",
+      ],
+    },
+  ],
+}
+`;
