@@ -20,6 +20,10 @@ inputs:
     description: "Fail the job when error-severity findings exist"
     required: false
     default: "true"
+  fail-on-score:
+    description: "Fail the job when the Context Health Score is below this number (0 disables the score gate)"
+    required: false
+    default: "0"
   comment:
     description: "Post/update a PR comment with the report (pull_request events only)"
     required: false
@@ -57,15 +61,27 @@ runs:
           --body-file ctxlint-report.md \
           --edit-last --create-if-none
 
-    - name: Gate on error findings
-      if: ${{ inputs.fail-on-error == 'true' }}
+    - name: Gate on findings and score
       shell: bash
       run: |
-        if [ "${{ steps.scan.outputs.errors }}" -gt 0 ]; then
-          echo "::error::ctxlint found ${{ steps.scan.outputs.errors }} error-severity finding(s) — Context Health Score ${{ steps.scan.outputs.score }}/100. See the job summary for details."
+        errors="${{ steps.scan.outputs.errors }}"
+        score="${{ steps.scan.outputs.score }}"
+        min_score="${{ inputs.fail-on-score }}"
+        failed=0
+        if [ "${{ inputs.fail-on-error }}" = "true" ] && [ "$errors" -gt 0 ]; then
+          echo "::error::ctxlint found ${errors} error-severity finding(s) — see the job summary for details."
+          failed=1
+        fi
+        # A quoted "0" is a real value here (string comparison in the shell),
+        # so setting fail-on-score: "0" genuinely disables the score gate.
+        if [ "$min_score" -gt 0 ] && [ "$score" -lt "$min_score" ]; then
+          echo "::error::Context Health Score ${score}/100 is below the required minimum of ${min_score}."
+          failed=1
+        fi
+        if [ "$failed" -eq 1 ]; then
           exit 1
         fi
-        echo "ctxlint: no error-severity findings (Context Health Score ${{ steps.scan.outputs.score }}/100)."
+        echo "ctxlint: gates passed (score ${score}/100, ${errors} error finding(s))."
 
 outputs:
   errors:

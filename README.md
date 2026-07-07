@@ -138,6 +138,7 @@ jobs:
       - uses: tqakdev/ctxlint/action@main
         with:
           fail-on-error: "true"   # gate the job on error-severity findings
+          fail-on-score: "0"      # optionally require a minimum Context Health Score (0 disables)
           comment: "true"         # post/update the report as a PR comment
 ```
 
