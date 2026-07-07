@@ -34,6 +34,8 @@
   },
   "packageManager": "pnpm@11.10.0",
   "dependencies": {
+    "@actions/core": "^3.0.1",
+    "@actions/github": "^9.1.1",
     "@anthropic-ai/sdk": "^0.110.0",
     "commander": "^15.0.0",
     "execa": "^9.6.1",

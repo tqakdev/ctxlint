@@ -1,0 +1,59 @@
+name: 'ctxlint - Context Linter for AI Agents'
+description: 'Block PRs with bloated or conflicting agent context files (.cursorrules, CLAUDE.md, AGENTS.md, .cursor/rules)'
+author: 'tqakdev'
+
+inputs:
+  path:
+    description: 'Path to scan (default: repository root)'
+    required: false
+    default: '.'
+  
+  fail-on-score:
+    description: 'Fail the action if Context Health Score is below this threshold (0-100)'
+    required: false
+    default: '70'
+  
+  fail-on-duplication:
+    description: 'Fail if duplicate or conflicting rules are found'
+    required: false
+    default: 'true'
+  
+  fail-on-findings:
+    description: 'Fail if any critical findings are present'
+    required: false
+    default: 'true'
+  
+  comment-on-pr:
+    description: 'Post findings as a PR comment'
+    required: false
+    default: 'true'
+  
+  max-token-budget:
+    description: 'Maximum allowed tokens for context files (0 = no limit)'
+    required: false
+    default: '0'
+
+outputs:
+  health-score:
+    description: 'Context Health Score (0-100)'
+  
+  findings-count:
+    description: 'Number of findings detected'
+  
+  critical-count:
+    description: 'Number of critical findings'
+  
+  duplication-count:
+    description: 'Number of duplication/conflict issues'
+  
+  total-tokens:
+    description: 'Total tokens in context files'
+
+runs:
+  using: 'node20'
+  main: 'dist/action-entrypoint.js'
+  post: 'dist/action-cleanup.js'
+
+branding:
+  icon: 'check-circle'
+  color: 'blue'
