@@ -14,9 +14,7 @@ export function analyzeStructure(surfaces: Surface[], rules: Rule[]): Finding[] 
   // 1. Sprawl: 3+ parallel per-tool files AT THE REPO ROOT that mostly don't
   //    overlap — each is hand-maintained separately and they will keep
   //    drifting apart. Subtree files are scoping, not sprawl.
-  const perTool = repoSurfaces.filter(
-    (s) => PER_TOOL_KINDS.has(s.kind) && s.scope === "repo-root",
-  );
+  const perTool = repoSurfaces.filter((s) => PER_TOOL_KINDS.has(s.kind) && s.scope === "repo-root");
   if (perTool.length >= 3) {
     const sets = perTool.map((s) => shingles(normalizeWords(s.raw)));
     let pairs = 0;

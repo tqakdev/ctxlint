@@ -6,7 +6,22 @@
 
 const REGEX_SPECIALS = /[.+^${}()|[\]\\]/g;
 
+/**
+ * Compiled-pattern memo: resolvers test the same handful of .mdc globs against
+ * the file list once per (tool, directory) pair, so compile each pattern once
+ * per process instead of once per call.
+ */
+const compiled = new Map<string, RegExp>();
+
 export function globToRegExp(glob: string): RegExp {
+  const cached = compiled.get(glob);
+  if (cached) return cached;
+  const re = compileGlob(glob);
+  compiled.set(glob, re);
+  return re;
+}
+
+function compileGlob(glob: string): RegExp {
   let out = "^";
   let i = 0;
   while (i < glob.length) {

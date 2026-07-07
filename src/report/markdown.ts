@@ -14,7 +14,9 @@ export function renderMarkdown(data: ReportData): string {
   lines.push("| freshness | uniqueness | consistency | budget | structure |");
   lines.push("|---:|---:|---:|---:|---:|");
   const s = data.score.subscores;
-  lines.push(`| ${s.freshness} | ${s.uniqueness} | ${s.consistency} | ${s.budget} | ${s.structure} |`);
+  lines.push(
+    `| ${s.freshness} | ${s.uniqueness} | ${s.consistency} | ${s.budget} | ${s.structure} |`,
+  );
   lines.push("");
   lines.push(
     `${data.stats.surfaces} context file(s), ${data.stats.rules} rules. Token counts: ${data.tokenNote}.`,
@@ -58,9 +60,7 @@ export function renderMarkdown(data: ReportData): string {
     lines.push("");
   }
 
-  lines.push(
-    `## Findings (${counts.error} error, ${counts.warn} warning, ${counts.info} info)`,
-  );
+  lines.push(`## Findings (${counts.error} error, ${counts.warn} warning, ${counts.info} info)`);
   lines.push("");
   if (data.findings.length === 0) {
     lines.push("No findings — this is a healthy setup.");

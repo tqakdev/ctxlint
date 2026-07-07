@@ -50,7 +50,10 @@ export function surfaceId(surfacePath: string): string {
 export function classifySurface(relPath: string): { kind: SurfaceKind; tools: ToolId[] } {
   const base = relPath.slice(relPath.lastIndexOf("/") + 1);
   if (base === "AGENTS.md") {
-    return { kind: "agents-md", tools: ["claude-code", "cursor", "copilot", "codex", "generic-agents-md"] };
+    return {
+      kind: "agents-md",
+      tools: ["claude-code", "cursor", "copilot", "codex", "generic-agents-md"],
+    };
   }
   if (base === "CLAUDE.md") return { kind: "claude-md", tools: ["claude-code"] };
   if (relPath.endsWith(".mdc")) return { kind: "cursor-rule", tools: ["cursor"] };

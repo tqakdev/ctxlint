@@ -20,13 +20,56 @@ const NEGATIVE = /\b(?:never|don'?t|do not|avoid|must not|no)\b/i;
 const POSITIVE = /\b(?:always|must|prefer|use|do)\b/i;
 
 const STOPWORDS = new Set([
-  "a", "an", "the", "in", "on", "of", "for", "to", "and", "or", "so", "that",
-  "this", "these", "those", "it", "its", "is", "are", "be", "with", "as", "at",
-  "by", "from", "into", "your", "our", "we", "you", "they", "them", "anywhere",
-  "everywhere", "here", "there",
+  "a",
+  "an",
+  "the",
+  "in",
+  "on",
+  "of",
+  "for",
+  "to",
+  "and",
+  "or",
+  "so",
+  "that",
+  "this",
+  "these",
+  "those",
+  "it",
+  "its",
+  "is",
+  "are",
+  "be",
+  "with",
+  "as",
+  "at",
+  "by",
+  "from",
+  "into",
+  "your",
+  "our",
+  "we",
+  "you",
+  "they",
+  "them",
+  "anywhere",
+  "everywhere",
+  "here",
+  "there",
 ]);
 
-const POLARITY_WORDS = new Set(["always", "never", "must", "not", "don't", "dont", "do", "avoid", "no", "prefer"]);
+const POLARITY_WORDS = new Set([
+  "always",
+  "never",
+  "must",
+  "not",
+  "don't",
+  "dont",
+  "do",
+  "avoid",
+  "no",
+  "prefer",
+]);
 
 type Polarity = "positive" | "negative" | "none";
 
@@ -88,11 +131,13 @@ export function analyzeContradiction(
     rule,
     ruleShingles: shingles(normalizeWords(rule.text)),
     sentences: splitSentences(rule.text)
-      .map((sentence): PreparedSentence => ({
-        sentence,
-        polarity: sentencePolarity(sentence),
-        bigrams: directiveCore(sentence),
-      }))
+      .map(
+        (sentence): PreparedSentence => ({
+          sentence,
+          polarity: sentencePolarity(sentence),
+          bigrams: directiveCore(sentence),
+        }),
+      )
       .filter((s) => s.polarity !== "none" && s.bigrams.size > 0),
   }));
 

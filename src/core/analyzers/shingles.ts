@@ -40,11 +40,16 @@ export function diffWords(a: readonly string[], b: readonly string[]): string {
   const n = b.length;
   const lcs: number[][] = Array.from({ length: m + 1 }, () => new Array<number>(n + 1).fill(0));
   for (let i = m - 1; i >= 0; i--) {
+    const row = lcs[i] as number[];
+    const below = lcs[i + 1] as number[];
     for (let j = n - 1; j >= 0; j--) {
-      lcs[i]![j] =
-        a[i] === b[j] ? (lcs[i + 1]![j + 1] as number) + 1 : Math.max(lcs[i + 1]![j] as number, lcs[i]![j + 1] as number);
+      row[j] =
+        a[i] === b[j]
+          ? (below[j + 1] as number) + 1
+          : Math.max(below[j] as number, row[j + 1] as number);
     }
   }
+  const at = (i: number, j: number): number => (lcs[i] as number[])[j] as number;
   const parts: { kind: "same" | "del" | "add"; word: string }[] = [];
   let i = 0;
   let j = 0;
@@ -53,7 +58,7 @@ export function diffWords(a: readonly string[], b: readonly string[]): string {
       parts.push({ kind: "same", word: a[i] as string });
       i++;
       j++;
-    } else if ((lcs[i + 1]![j] as number) >= (lcs[i]![j + 1] as number)) {
+    } else if (at(i + 1, j) >= at(i, j + 1)) {
       parts.push({ kind: "del", word: a[i] as string });
       i++;
     } else {
@@ -68,7 +73,8 @@ export function diffWords(a: readonly string[], b: readonly string[]): string {
   const keep = new Array<boolean>(parts.length).fill(false);
   parts.forEach((part, idx) => {
     if (part.kind === "same") return;
-    for (let k = Math.max(0, idx - 2); k <= Math.min(parts.length - 1, idx + 2); k++) keep[k] = true;
+    for (let k = Math.max(0, idx - 2); k <= Math.min(parts.length - 1, idx + 2); k++)
+      keep[k] = true;
   });
   const pieces: string[] = [];
   let skipping = false;

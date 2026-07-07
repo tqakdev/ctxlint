@@ -1,12 +1,11 @@
 import path from "node:path";
 import pc from "picocolors";
-import { type CtxlintConfig, loadConfig } from "../config.js";
-import { agreementReport, pickCalibrationSample } from "../compliance/calibrate.js";
 import { VerdictCache } from "../compliance/cache.js";
+import { agreementReport, pickCalibrationSample } from "../compliance/calibrate.js";
 import {
   anthropicJudgeClient,
-  estimateCost,
   type CostEstimate,
+  estimateCost,
   type JudgeClient,
   type JudgedPair,
   type JudgePair,
@@ -14,6 +13,7 @@ import {
 } from "../compliance/judge.js";
 import { prepareChunk, prepareRule, ruleApplies } from "../compliance/prefilter.js";
 import { sampleCommits } from "../compliance/sampler.js";
+import { type CtxlintConfig, loadConfig } from "../config.js";
 import type { Rule } from "../core/model.js";
 import { runScan } from "../core/pipeline.js";
 import { CACHE_DIR } from "./scan.js";
@@ -186,7 +186,9 @@ export async function runCompliance(
   const outcome: ComplianceOutcome = {
     status: "ok",
     cost,
-    reports: [...reportsById.values()].sort((a, b) => b.violated - a.violated || b.applicable - a.applicable),
+    reports: [...reportsById.values()].sort(
+      (a, b) => b.violated - a.violated || b.applicable - a.applicable,
+    ),
     deadRules,
     commitsSampled: sample.commitsSampled,
     usedMerges: sample.usedMerges,
@@ -194,7 +196,10 @@ export async function runCompliance(
   };
 
   if (options.calibrate) {
-    const calibrationSample = pickCalibrationSample(judged, config.compliance.calibrationSampleRatio);
+    const calibrationSample = pickCalibrationSample(
+      judged,
+      config.compliance.calibrationSampleRatio,
+    );
     const calibrationCache = new VerdictCache(
       path.join(root, CACHE_DIR, "compliance-cache-calibration.json"),
     );
@@ -222,7 +227,9 @@ function renderOutcome(outcome: ComplianceOutcome): string {
       lines.push("");
       lines.push(`Dead-rule candidates (matched none of the sampled changes):`);
       for (const dead of outcome.deadRules.slice(0, 20)) {
-        lines.push(`  - ${dead.surfacePath}:${dead.rule.span.startLine} "${dead.rule.text.slice(0, 80)}"`);
+        lines.push(
+          `  - ${dead.surfacePath}:${dead.rule.span.startLine} "${dead.rule.text.slice(0, 80)}"`,
+        );
       }
     }
     return `${lines.join("\n")}\n`;
@@ -245,8 +252,10 @@ function renderOutcome(outcome: ComplianceOutcome): string {
 
   for (const report of outcome.reports) {
     if (report.applicable === 0 && report.errors === 0) continue;
-    const followedPct = report.applicable === 0 ? 0 : Math.round((report.followed / report.applicable) * 100);
-    const violatedPct = report.applicable === 0 ? 0 : Math.round((report.violated / report.applicable) * 100);
+    const followedPct =
+      report.applicable === 0 ? 0 : Math.round((report.followed / report.applicable) * 100);
+    const violatedPct =
+      report.applicable === 0 ? 0 : Math.round((report.violated / report.applicable) * 100);
     const color = report.violated > 0 ? pc.red : pc.green;
     lines.push(
       `${color("●")} ${report.surfacePath}:${report.rule.span.startLine} — applicable ${report.applicable}, followed ${followedPct}%, violated ${violatedPct}%${report.errors > 0 ? pc.dim(` (${report.errors} judge error(s))`) : ""}`,
@@ -259,12 +268,22 @@ function renderOutcome(outcome: ComplianceOutcome): string {
 
   if (outcome.deadRules.length > 0) {
     lines.push("");
-    lines.push(pc.bold(`Dead-rule candidates (${outcome.deadRules.length}) — applied to nothing in this sample:`));
+    lines.push(
+      pc.bold(
+        `Dead-rule candidates (${outcome.deadRules.length}) — applied to nothing in this sample:`,
+      ),
+    );
     for (const dead of outcome.deadRules.slice(0, 20)) {
-      lines.push(pc.dim(`  - ${dead.surfacePath}:${dead.rule.span.startLine} "${dead.rule.text.slice(0, 80)}"`));
+      lines.push(
+        pc.dim(
+          `  - ${dead.surfacePath}:${dead.rule.span.startLine} "${dead.rule.text.slice(0, 80)}"`,
+        ),
+      );
     }
     lines.push(
-      pc.dim("  A dead rule costs tokens on every request and never changes behavior — consider deleting."),
+      pc.dim(
+        "  A dead rule costs tokens on every request and never changes behavior — consider deleting.",
+      ),
     );
   }
 
@@ -287,7 +306,9 @@ function renderOutcome(outcome: ComplianceOutcome): string {
   }
 
   lines.push("");
-  lines.push(pc.dim("Verdicts are LLM judgments over sampled diffs — directional signal, not ground truth."));
+  lines.push(
+    pc.dim("Verdicts are LLM judgments over sampled diffs — directional signal, not ground truth."),
+  );
   lines.push("");
   return lines.join("\n");
 }

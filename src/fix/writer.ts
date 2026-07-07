@@ -45,7 +45,8 @@ export async function checkCleanTree(root: string): Promise<TreeState> {
   } catch {
     return {
       clean: false,
-      reason: "not a git repository — --write needs git so every change is reviewable and revertable",
+      reason:
+        "not a git repository — --write needs git so every change is reviewable and revertable",
     };
   }
 }
@@ -119,7 +120,9 @@ export function unifiedDiff(file: string, before: string, after: string): string
     endB--;
   }
   if (start > a.length - 1 && start > b.length - 1) return `${out.join("\n")}\n(no changes)`;
-  out.push(`@@ -${start + 1},${Math.max(0, endA - start + 1)} +${start + 1},${Math.max(0, endB - start + 1)} @@`);
+  out.push(
+    `@@ -${start + 1},${Math.max(0, endA - start + 1)} +${start + 1},${Math.max(0, endB - start + 1)} @@`,
+  );
   for (let i = start; i <= endA; i++) out.push(`-${a[i]}`);
   for (let i = start; i <= endB; i++) out.push(`+${b[i]}`);
   return out.join("\n");

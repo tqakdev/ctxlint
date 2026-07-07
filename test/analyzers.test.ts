@@ -85,9 +85,9 @@ describe("M2 acceptance: messy-repo triggers every static finding category", () 
 
   it("structure: sprawl consolidation suggestion + broken frontmatter", async () => {
     const findings = ofCategory(await messy(), "structure");
-    expect(findings.some((f) => f.message.includes("Consolidate shared rules into AGENTS.md"))).toBe(
-      true,
-    );
+    expect(
+      findings.some((f) => f.message.includes("Consolidate shared rules into AGENTS.md")),
+    ).toBe(true);
     expect(findings.some((f) => f.message.includes("broken frontmatter"))).toBe(true);
   });
 
@@ -148,7 +148,10 @@ describe("similarity primitives", () => {
   });
 
   it("diffWords marks the changed hunk with context", () => {
-    const diff = diffWords(normalizeWords("push to the main branch"), normalizeWords("push to the develop branch"));
+    const diff = diffWords(
+      normalizeWords("push to the main branch"),
+      normalizeWords("push to the develop branch"),
+    );
     expect(diff).toContain("[-main-]");
     expect(diff).toContain("{+develop+}");
   });

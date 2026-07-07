@@ -4,6 +4,12 @@
   "description": "Linter, profiler, and coverage for AI agent context files (AGENTS.md, CLAUDE.md, .cursor/rules, copilot-instructions)",
   "type": "module",
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/tqakdev/ctxlint.git"
+  },
+  "homepage": "https://github.com/tqakdev/ctxlint#readme",
+  "bugs": "https://github.com/tqakdev/ctxlint/issues",
   "engines": {
     "node": ">=20"
   },
@@ -26,6 +32,7 @@
   ],
   "scripts": {
     "build": "tsc -p tsconfig.build.json",
+    "prepack": "pnpm run build",
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
     "test:watch": "vitest",

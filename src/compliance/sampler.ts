@@ -20,9 +20,13 @@ export interface SampleResult {
 
 export type SampleError = { error: string };
 
-/** Paths whose diffs are noise for rule compliance. */
+/**
+ * Paths whose diffs are noise for rule compliance: lockfiles, generated and
+ * vendored code — and the context surfaces themselves (judging "does adding
+ * this rule follow this rule" is meaningless and pollutes applicability).
+ */
 const SKIP_FILE =
-  /(^|\/)(package-lock\.json|pnpm-lock\.yaml|yarn\.lock|Cargo\.lock|composer\.lock|go\.sum)$|(^|\/)(node_modules|vendor|dist|build|out|coverage|\.next|__generated__)\/|\.(min\.js|map|snap|lock)$/;
+  /(^|\/)(package-lock\.json|pnpm-lock\.yaml|yarn\.lock|Cargo\.lock|composer\.lock|go\.sum)$|(^|\/)(node_modules|vendor|dist|build|out|coverage|\.next|__generated__)\/|\.(min\.js|map|snap|lock)$|(^|\/)(AGENTS\.md|CLAUDE\.md|SKILL\.md|\.cursorrules)$|(^|\/)\.cursor\/rules\/[^/]+\.mdc$|^\.github\/copilot-instructions\.md$/;
 
 export const MAX_CHUNK_TOKENS = 4000;
 
@@ -74,11 +78,16 @@ export function chunkFileDiffs(sha: string, fileDiffs: FileDiff[], maxTokens: nu
     let text = fileDiff.text;
     let cost = estimateTokens(text);
     if (cost > maxTokens) {
-      // One enormous file diff — keep the head, note the truncation.
+      // One enormous file diff — keep the head, note the truncation. The
+      // token/line ratio is uneven, so shrink until actually under the cap.
       const lines = text.split("\n");
-      const keep = Math.max(20, Math.floor(lines.length * (maxTokens / cost)));
-      text = `${lines.slice(0, keep).join("\n")}\n… (diff truncated by ctxlint at ~${maxTokens} tokens)\n`;
-      cost = estimateTokens(text);
+      let keep = Math.max(20, Math.floor(lines.length * (maxTokens / cost)));
+      for (;;) {
+        text = `${lines.slice(0, keep).join("\n")}\n… (diff truncated by ctxlint at ~${maxTokens} tokens)\n`;
+        cost = estimateTokens(text);
+        if (cost <= maxTokens || keep <= 20) break;
+        keep = Math.floor(keep * 0.8);
+      }
     }
     if (tokens + cost > maxTokens) flush();
     files.push(fileDiff.file);
@@ -121,7 +130,15 @@ export async function sampleCommits(
     try {
       // -m --first-parent: for merges, show the change the merge actually
       // landed (vs first parent); harmless for plain commits.
-      diff = await git(root, ["show", sha, "--format=", "--patch", "-m", "--first-parent", "--no-color"]);
+      diff = await git(root, [
+        "show",
+        sha,
+        "--format=",
+        "--patch",
+        "-m",
+        "--first-parent",
+        "--no-color",
+      ]);
     } catch {
       continue;
     }

@@ -38,7 +38,9 @@ export function resolveAll(surfaces: Surface[], index: RepoIndex): EffectiveCont
   const subtreeDirs = new Set<string>();
   for (const surface of surfaces) {
     if (surface.scope !== "subtree") continue;
-    subtreeDirs.add(surface.kind === "cursor-rule" ? cursorRuleDir(surface.path) : dirOf(surface.path));
+    subtreeDirs.add(
+      surface.kind === "cursor-rule" ? cursorRuleDir(surface.path) : dirOf(surface.path),
+    );
   }
 
   const contexts: EffectiveContext[] = [];

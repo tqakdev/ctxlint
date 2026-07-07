@@ -21,9 +21,7 @@ function pad(text: string, width: number): string {
 }
 
 function table(headers: string[], rows: string[][]): string[] {
-  const widths = headers.map((h, i) =>
-    Math.max(h.length, ...rows.map((r) => (r[i] ?? "").length)),
-  );
+  const widths = headers.map((h, i) => Math.max(h.length, ...rows.map((r) => (r[i] ?? "").length)));
   const render = (cells: string[]) =>
     `  ${cells.map((cell, i) => pad(cell, widths[i] as number)).join("  ")}`.trimEnd();
   return [pc.dim(render(headers)), ...rows.map(render)];
@@ -102,7 +100,9 @@ export function renderTerminal(data: ReportData): string {
   }
   for (const finding of data.findings) {
     const style = SEVERITY_STYLE[finding.severity];
-    lines.push(`  ${style(SEVERITY_MARK[finding.severity])} ${style(`[${finding.category}]`)} ${finding.message}`);
+    lines.push(
+      `  ${style(SEVERITY_MARK[finding.severity])} ${style(`[${finding.category}]`)} ${finding.message}`,
+    );
     for (const evidenceLine of finding.evidence.split("\n")) {
       lines.push(pc.dim(`      ${evidenceLine}`));
     }

@@ -4,9 +4,9 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { execa } from "execa";
 import { describe, expect, it } from "vitest";
+import { runFix } from "../src/commands/fix.js";
 import { normalizeWords } from "../src/core/analyzers/shingles.js";
 import { runScan } from "../src/core/pipeline.js";
-import { runFix } from "../src/commands/fix.js";
 import { planFixes } from "../src/fix/planner.js";
 import { applyEditsToContent } from "../src/fix/writer.js";
 
@@ -49,7 +49,9 @@ describe("fix planner", () => {
     expect(moves).toHaveLength(1);
     expect(moves[0]?.evidence).toContain("NEVER run");
     expect(
-      plan.fixes.some((f) => f.kind === "move-to-front" && !f.safe && /judgment/.test(f.description)),
+      plan.fixes.some(
+        (f) => f.kind === "move-to-front" && !f.safe && /judgment/.test(f.description),
+      ),
     ).toBe(true);
   });
 

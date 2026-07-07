@@ -74,8 +74,10 @@ const isDirectRun = (() => {
 })();
 
 if (isDirectRun) {
-  buildProgram().parseAsync(process.argv).catch((error: unknown) => {
-    process.stderr.write(`ctxlint: ${(error as Error).message}\n`);
-    process.exit(2);
-  });
+  buildProgram()
+    .parseAsync(process.argv)
+    .catch((error: unknown) => {
+      process.stderr.write(`ctxlint: ${(error as Error).message}\n`);
+      process.exit(2);
+    });
 }

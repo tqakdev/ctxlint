@@ -15,15 +15,13 @@ export function isAncestorOrSelf(ancestor: string, dir: string): boolean {
  * Surfaces of `kind` that apply when working in `directory`, ordered from the
  * repo root down to the directory (broader context first).
  */
-export function chainFor(
-  surfaces: Surface[],
-  kind: Surface["kind"],
-  directory: string,
-): Surface[] {
+export function chainFor(surfaces: Surface[], kind: Surface["kind"], directory: string): Surface[] {
   return surfaces
     .filter((s) => s.kind === kind && s.scope !== "user-global")
     .filter((s) => isAncestorOrSelf(dirOf(s.path), directory))
-    .sort((a, b) => a.path.split("/").length - b.path.split("/").length || (a.path < b.path ? -1 : 1));
+    .sort(
+      (a, b) => a.path.split("/").length - b.path.split("/").length || (a.path < b.path ? -1 : 1),
+    );
 }
 
 export function buildContext(

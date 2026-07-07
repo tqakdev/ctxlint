@@ -18,10 +18,14 @@ function isParent(node: Node): node is Parent {
   return Array.isArray((node as Parent).children);
 }
 
+/** Pathological nesting guard: content deeper than this is skipped, not walked. */
+const MAX_NESTING_DEPTH = 100;
+
 /** Flatten a node to display text, collecting inline-code spans separately. */
 export function inlineText(node: Node): InlineText {
   const codeSpans: string[] = [];
-  const walk = (n: Node): string => {
+  const walk = (n: Node, depth: number): string => {
+    if (depth > MAX_NESTING_DEPTH) return "";
     switch (n.type) {
       case "text":
         return (n as unknown as { value: string }).value;
@@ -36,17 +40,17 @@ export function inlineText(node: Node): InlineText {
         return " ";
       case "link": {
         const parent = n as Parent & { url?: string };
-        const label = parent.children.map(walk).join("");
+        const label = parent.children.map((c) => walk(c, depth + 1)).join("");
         if (parent.url && !/^[a-z]+:/i.test(parent.url) && !parent.url.startsWith("#")) {
           codeSpans.push(parent.url);
         }
         return label;
       }
       default:
-        return isParent(n) ? n.children.map(walk).join("") : "";
+        return isParent(n) ? n.children.map((c) => walk(c, depth + 1)).join("") : "";
     }
   };
-  const text = walk(node).replace(/\s+/g, " ").trim();
+  const text = walk(node, 0).replace(/\s+/g, " ").trim();
   return { text, codeSpans };
 }
 
@@ -182,11 +186,14 @@ export function extractRules(surface: Surface, root?: Root): Rule[] {
     ordinal += 1;
   };
 
-  const visitBlock = (node: Node): void => {
+  const visitBlock = (node: Node, depth: number): void => {
     switch (node.type) {
       case "heading": {
         const heading = node as Heading;
         headings.length = heading.depth - 1;
+        // Fill holes left by skipped levels (h1 -> h3) so section paths never
+        // contain undefined — common in human-written docs.
+        for (let i = 0; i < headings.length; i++) headings[i] ??= "";
         headings[heading.depth - 1] = inlineText(heading).text;
         break;
       }
@@ -209,13 +216,15 @@ export function extractRules(surface: Surface, root?: Root): Rule[] {
         break;
       }
       case "blockquote":
-        for (const child of (node as Parent).children) visitBlock(child);
+        if (depth < MAX_NESTING_DEPTH) {
+          for (const child of (node as Parent).children) visitBlock(child, depth + 1);
+        }
         break;
       default:
         break;
     }
   };
 
-  for (const child of tree.children) visitBlock(child);
+  for (const child of tree.children) visitBlock(child, 0);
   return rules;
 }

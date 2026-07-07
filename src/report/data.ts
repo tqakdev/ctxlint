@@ -83,7 +83,11 @@ export function buildReportData(result: ScanResult, generatedAt = new Date()): R
   };
 }
 
-export function countBySeverity(findings: Finding[]): { error: number; warn: number; info: number } {
+export function countBySeverity(findings: Finding[]): {
+  error: number;
+  warn: number;
+  info: number;
+} {
   const counts = { error: 0, warn: 0, info: 0 };
   for (const finding of findings) counts[finding.severity] += 1;
   return counts;

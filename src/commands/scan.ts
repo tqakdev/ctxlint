@@ -39,7 +39,10 @@ async function makeExactCounter() {
   return createExactCounter(new Anthropic(), MODELS.judge);
 }
 
-export async function scanCommand(targetPath: string | undefined, options: ScanCliOptions): Promise<void> {
+export async function scanCommand(
+  targetPath: string | undefined,
+  options: ScanCliOptions,
+): Promise<void> {
   const root = path.resolve(targetPath ?? ".");
   const config = await loadConfig(root);
   const maxFiles = options.maxFiles ? Number(options.maxFiles) : undefined;

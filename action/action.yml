@@ -1,0 +1,76 @@
+name: "ctxlint"
+description: >-
+  Audit the context files steering AI coding agents (AGENTS.md, CLAUDE.md,
+  .cursor/rules, copilot-instructions.md). Posts a Context Health report as a
+  PR comment and can gate the job on error-severity findings.
+branding:
+  icon: "check-circle"
+  color: "purple"
+
+inputs:
+  path:
+    description: "Directory to scan"
+    required: false
+    default: "."
+  version:
+    description: "ctxlint version to run (npm dist-tag or exact version)"
+    required: false
+    default: "latest"
+  fail-on-error:
+    description: "Fail the job when error-severity findings exist"
+    required: false
+    default: "true"
+  comment:
+    description: "Post/update a PR comment with the report (pull_request events only)"
+    required: false
+    default: "true"
+  github-token:
+    description: "Token used to post the PR comment"
+    required: false
+    default: ${{ github.token }}
+
+runs:
+  using: "composite"
+  steps:
+    - name: Scan agent context files
+      id: scan
+      shell: bash
+      working-directory: ${{ inputs.path }}
+      run: |
+        npx --yes "ctxlint@${{ inputs.version }}" scan --format md --output ctxlint-report.md
+        npx --yes "ctxlint@${{ inputs.version }}" scan --format json --output ctxlint-report.json
+        errors="$(jq '[.findings[] | select(.severity == "error")] | length' ctxlint-report.json)"
+        score="$(jq '.score.total' ctxlint-report.json)"
+        echo "errors=${errors}" >> "$GITHUB_OUTPUT"
+        echo "score=${score}" >> "$GITHUB_OUTPUT"
+        cat ctxlint-report.md >> "$GITHUB_STEP_SUMMARY"
+
+    - name: Comment on the pull request
+      if: ${{ inputs.comment == 'true' && github.event_name == 'pull_request' }}
+      shell: bash
+      working-directory: ${{ inputs.path }}
+      env:
+        GH_TOKEN: ${{ inputs.github-token }}
+      run: |
+        gh pr comment "${{ github.event.pull_request.number }}" \
+          --repo "${{ github.repository }}" \
+          --body-file ctxlint-report.md \
+          --edit-last --create-if-none
+
+    - name: Gate on error findings
+      if: ${{ inputs.fail-on-error == 'true' }}
+      shell: bash
+      run: |
+        if [ "${{ steps.scan.outputs.errors }}" -gt 0 ]; then
+          echo "::error::ctxlint found ${{ steps.scan.outputs.errors }} error-severity finding(s) — Context Health Score ${{ steps.scan.outputs.score }}/100. See the job summary for details."
+          exit 1
+        fi
+        echo "ctxlint: no error-severity findings (Context Health Score ${{ steps.scan.outputs.score }}/100)."
+
+outputs:
+  errors:
+    description: "Number of error-severity findings"
+    value: ${{ steps.scan.outputs.errors }}
+  score:
+    description: "Context Health Score (0-100)"
+    value: ${{ steps.scan.outputs.score }}

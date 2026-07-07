@@ -28,10 +28,7 @@ export interface AgreementReport {
   agreement: number;
 }
 
-export function agreementReport(
-  primary: JudgedPair[],
-  secondary: JudgedPair[],
-): AgreementReport {
+export function agreementReport(primary: JudgedPair[], secondary: JudgedPair[]): AgreementReport {
   const primaryByKey = new Map(
     primary
       .filter((p) => p.verdict !== undefined)

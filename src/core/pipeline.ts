@@ -41,7 +41,11 @@ export interface ScanResult {
 
 export async function runScan(options: ScanOptions): Promise<ScanResult> {
   const config = options.config ?? DEFAULT_CONFIG;
-  const { surfaces, index, findings: discoveryFindings } = await discover({
+  const {
+    surfaces,
+    index,
+    findings: discoveryFindings,
+  } = await discover({
     root: options.root,
     maxFiles: options.maxFiles ?? config.discovery.maxFiles,
     maxSurfaceBytes: config.discovery.maxSurfaceBytes,

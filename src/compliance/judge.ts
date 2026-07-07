@@ -23,7 +23,9 @@ export function anthropicJudgeClient(): JudgeClient {
         messages: [{ role: "user", content: prompt }],
       });
       return response.content
-        .filter((block): block is { type: "text"; text: string } & typeof block => block.type === "text")
+        .filter(
+          (block): block is { type: "text"; text: string } & typeof block => block.type === "text",
+        )
         .map((block) => block.text)
         .join("");
     },
@@ -106,7 +108,13 @@ export function estimateCost(pairs: JudgePair[], cache: VerdictCache, model: str
   const usd =
     (inputTokens * pricing.inputPerMTok) / 1_000_000 +
     (outputTokens * pricing.outputPerMTok) / 1_000_000;
-  return { pairs: pairs.length, cachedPairs: pairs.length - uncached, inputTokens, outputTokens, usd };
+  return {
+    pairs: pairs.length,
+    cachedPairs: pairs.length - uncached,
+    inputTokens,
+    outputTokens,
+    usd,
+  };
 }
 
 /**
@@ -132,7 +140,12 @@ export async function judgePairs(
       const key = cacheKey(ruleHash(pair.rule.text), pair.chunk.id, model);
       const cached = cache.get(key);
       if (cached) {
-        results[index] = { ...pair, verdict: cached.verdict, evidence: cached.evidence, fromCache: true };
+        results[index] = {
+          ...pair,
+          verdict: cached.verdict,
+          evidence: cached.evidence,
+          fromCache: true,
+        };
         continue;
       }
       try {
