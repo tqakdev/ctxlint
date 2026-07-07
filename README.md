@@ -155,6 +155,32 @@ jobs:
 The action also writes the report to the job summary and exposes `score` and `errors`
 as outputs.
 
+## Pre-commit hook
+
+Catch broken context files before they land. Plain git hook — no extra dependency:
+
+```bash
+# .git/hooks/pre-commit  (chmod +x)
+#!/bin/sh
+# Only run when a context file is in the commit.
+if git diff --cached --name-only | grep -qE \
+  '(^|/)(AGENTS|CLAUDE|SKILL)\.md$|\.cursor(rules)?(/|$)|\.mdc$|\.windsurf(rules)?(/|$)|copilot-instructions\.md$'; then
+  npx @tqakdev/ctxlint scan --ci || {
+    echo "ctxlint: error-severity findings — fix them or commit with --no-verify" >&2
+    exit 1
+  }
+fi
+```
+
+With [husky](https://typicode.github.io/husky/):
+
+```bash
+echo "npx @tqakdev/ctxlint scan --ci" > .husky/pre-commit
+```
+
+`--ci` exits 1 only on error-severity findings (stale references, cross-tool
+duplicates); warnings and infos never block a commit.
+
 ## Configuration
 
 Everything has a default aimed at typical repos; create `ctxlint.config.json` only to
