@@ -13,10 +13,19 @@ skills. It answers the questions nobody can currently answer about their repo:
 - **Do they help?** Judge recent commits against your rules to find violations and
   dead rules that never apply to anything.
 
+## Install
+
+The npm package is **`ctxaudit`**; the command it installs is **`ctxlint`**.
+
+```sh
+npx ctxaudit scan          # one-off, no install
+npm i -g ctxaudit          # then run `ctxlint` anywhere
+```
+
 ## Quickstart (30 seconds)
 
 ```sh
-npx ctxlint scan
+npx ctxaudit scan
 ```
 
 That's it — no config needed. You get a Context Health Score (0–100), a per-tool table
