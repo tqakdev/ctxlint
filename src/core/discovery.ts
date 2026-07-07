@@ -155,6 +155,7 @@ export async function discover(options: DiscoverOptions): Promise<DiscoveryResul
     dot: true,
     onlyFiles: true,
     followSymbolicLinks: false,
+    suppressErrors: true,
     ignore,
   });
   for await (const entry of stream) {
@@ -204,6 +205,7 @@ export async function discover(options: DiscoverOptions): Promise<DiscoveryResul
       dot: true,
       onlyFiles: true,
       followSymbolicLinks: false,
+      suppressErrors: true,
       ignore,
     })
   )
