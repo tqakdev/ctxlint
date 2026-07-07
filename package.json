@@ -4,7 +4,7 @@
   "publishConfig": {
     "access": "public"
   },
-  "description": "Linter, profiler, and coverage for AI agent context files (AGENTS.md, CLAUDE.md, .cursor/rules, copilot-instructions)",
+  "description": "Linter, profiler, and coverage for AI agent context files (AGENTS.md, CLAUDE.md, .cursor/rules, copilot-instructions, .windsurf/rules)",
   "type": "module",
   "license": "MIT",
   "repository": {
@@ -28,6 +28,7 @@
     "claude",
     "cursor",
     "copilot",
+    "windsurf",
     "lint",
     "context",
     "AGENTS.md",

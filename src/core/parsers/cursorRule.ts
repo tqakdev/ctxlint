@@ -9,7 +9,7 @@ export interface CursorRuleMeta {
   frontmatterError?: string;
 }
 
-function normalizeGlobs(value: unknown): string[] | undefined {
+export function normalizeGlobs(value: unknown): string[] | undefined {
   if (Array.isArray(value)) return value.map(String);
   if (typeof value === "string") {
     return value
@@ -24,7 +24,7 @@ function normalizeGlobs(value: unknown): string[] | undefined {
  * Strip a frontmatter block by hand when the YAML is unparseable, so we can
  * still extract rules from the body instead of treating delimiters as prose.
  */
-function stripBrokenFrontmatter(raw: string): string {
+export function stripBrokenFrontmatter(raw: string): string {
   const lines = raw.split("\n");
   if (!/^-{3}\s*$/.test(lines[0] ?? "")) return raw;
   for (let i = 1; i < lines.length; i++) {

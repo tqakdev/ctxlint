@@ -3,6 +3,7 @@ import { parseAgentsMd } from "./agentsMd.js";
 import { parseCopilot } from "./copilot.js";
 import { parseCursorRule } from "./cursorRule.js";
 import { parseSkill } from "./skill.js";
+import { parseWindsurfRule } from "./windsurfRule.js";
 
 export interface ParseOutput {
   rules: Rule[];
@@ -13,6 +14,8 @@ export function parseSurface(surface: Surface): ParseOutput {
   switch (surface.kind) {
     case "cursor-rule":
       return parseCursorRule(surface);
+    case "windsurf-rule":
+      return parseWindsurfRule(surface);
     case "skill":
       return parseSkill(surface);
     case "copilot-instructions":

@@ -3,8 +3,9 @@
 **Linter + profiler + coverage, but for agent context.**
 
 `ctxlint` audits, profiles, and scores the context files steering AI coding agents —
-`AGENTS.md`, `CLAUDE.md`, `.cursor/rules/*.mdc`, `.github/copilot-instructions.md`, and
-skills. It answers the questions nobody can currently answer about their repo:
+`AGENTS.md`, `CLAUDE.md`, `.cursor/rules/*.mdc`, `.github/copilot-instructions.md`,
+`.windsurf/rules/*.md`, and skills. It answers the questions nobody can currently
+answer about their repo:
 
 - **What does my agent actually load?** Per tool, per directory, in what order, and why.
 - **What does it cost?** Token totals for the context injected on every request.
@@ -194,7 +195,8 @@ Honesty section. Read this before trusting a number.
   sample size — a rule that applied to nothing in 30 commits might apply next week.
 - **Load semantics are best-effort.** Tool behavior is encoded from documented
   behavior; where it's undocumented, the table says "(assumed)" instead of presenting
-  a guess as fact. Legacy `.cursorrules` is treated as loaded by nothing (assumed).
+  a guess as fact. Legacy `.cursorrules` is treated as loaded by nothing (assumed);
+  legacy `.windsurfrules` is treated as still read by Windsurf (deprecated format).
 - **Some heuristics are English-only.** Duplication/drift shingles work on any
   language; polarity-based contradiction detection only understands English
   always/never phrasing, and says so in each finding.

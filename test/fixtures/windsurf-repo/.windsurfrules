@@ -1,0 +1,3 @@
+# Legacy windsurf rules
+
+- Always run `npm run test` before committing any change to this repository.

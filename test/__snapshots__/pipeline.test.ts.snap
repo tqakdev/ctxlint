@@ -40,6 +40,13 @@ exports[`M1 pipeline snapshots > clean-repo 1`] = `
       "tool": "codex",
     },
     {
+      "alwaysOnTokens": 0,
+      "conditionalTokens": 0,
+      "dir": ".",
+      "files": [],
+      "tool": "windsurf",
+    },
+    {
       "alwaysOnTokens": 275,
       "conditionalTokens": 0,
       "dir": ".",
@@ -115,6 +122,13 @@ exports[`M1 pipeline snapshots > messy-repo 1`] = `
       "dir": ".",
       "files": [],
       "tool": "codex",
+    },
+    {
+      "alwaysOnTokens": 0,
+      "conditionalTokens": 0,
+      "dir": ".",
+      "files": [],
+      "tool": "windsurf",
     },
     {
       "alwaysOnTokens": 0,
@@ -332,6 +346,13 @@ exports[`M1 pipeline snapshots > monorepo 1`] = `
         "2. packages/web/AGENTS.md",
       ],
       "tool": "codex",
+    },
+    {
+      "alwaysOnTokens": 0,
+      "conditionalTokens": 0,
+      "dir": ".",
+      "files": [],
+      "tool": "windsurf",
     },
     {
       "alwaysOnTokens": 182,

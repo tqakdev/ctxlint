@@ -43,8 +43,9 @@ const KIND_RANK: Record<SurfaceKind, number> = {
   "claude-md": 1,
   "copilot-instructions": 2,
   "cursor-rule": 3,
-  skill: 4,
-  other: 5,
+  "windsurf-rule": 4,
+  skill: 5,
+  other: 6,
 };
 
 const AUTHOR_EMPHASIZED = /\b(?:NEVER|MUST(?: NOT)?|ALWAYS|DO NOT)\b/;

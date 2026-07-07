@@ -1,7 +1,13 @@
 import type { Finding, Rule, Surface } from "../model.js";
 import { jaccard, normalizeWords, shingles } from "./shingles.js";
 
-const PER_TOOL_KINDS = new Set(["claude-md", "cursor-rule", "copilot-instructions", "other"]);
+const PER_TOOL_KINDS = new Set([
+  "claude-md",
+  "cursor-rule",
+  "copilot-instructions",
+  "windsurf-rule",
+  "other",
+]);
 
 /**
  * Repo-shape findings: per-tool file sprawl, empty/boilerplate surfaces,

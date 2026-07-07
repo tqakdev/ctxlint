@@ -5,6 +5,7 @@ import { resolveCodex, resolveGenericAgentsMd } from "./codex.js";
 import { resolveCopilot } from "./copilot.js";
 import { cursorRuleDir, resolveCursor } from "./cursor.js";
 import { dirOf } from "./shared.js";
+import { resolveWindsurf, windsurfRuleDir } from "./windsurf.js";
 
 type Resolver = (surfaces: Surface[], directory: string, index: RepoIndex) => EffectiveContext;
 
@@ -13,6 +14,7 @@ export const RESOLVERS: Record<ToolId, Resolver> = {
   cursor: resolveCursor,
   copilot: resolveCopilot,
   codex: resolveCodex,
+  windsurf: resolveWindsurf,
   "generic-agents-md": resolveGenericAgentsMd,
 };
 
@@ -38,9 +40,13 @@ export function resolveAll(surfaces: Surface[], index: RepoIndex): EffectiveCont
   const subtreeDirs = new Set<string>();
   for (const surface of surfaces) {
     if (surface.scope !== "subtree") continue;
-    subtreeDirs.add(
-      surface.kind === "cursor-rule" ? cursorRuleDir(surface.path) : dirOf(surface.path),
-    );
+    const dir =
+      surface.kind === "cursor-rule"
+        ? cursorRuleDir(surface.path)
+        : surface.kind === "windsurf-rule"
+          ? windsurfRuleDir(surface.path)
+          : dirOf(surface.path);
+    subtreeDirs.add(dir);
   }
 
   const contexts: EffectiveContext[] = [];

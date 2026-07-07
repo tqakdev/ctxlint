@@ -3,13 +3,20 @@
  * Finding[]; analyzers are pure functions (no I/O) so they are trivially testable.
  */
 
-export type ToolId = "claude-code" | "cursor" | "copilot" | "codex" | "generic-agents-md";
+export type ToolId =
+  | "claude-code"
+  | "cursor"
+  | "copilot"
+  | "codex"
+  | "windsurf"
+  | "generic-agents-md";
 
 export const TOOL_IDS: readonly ToolId[] = [
   "claude-code",
   "cursor",
   "copilot",
   "codex",
+  "windsurf",
   "generic-agents-md",
 ];
 
@@ -18,6 +25,7 @@ export type SurfaceKind =
   | "claude-md"
   | "cursor-rule"
   | "copilot-instructions"
+  | "windsurf-rule"
   | "skill"
   | "other";
 

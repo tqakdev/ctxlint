@@ -91,6 +91,51 @@ describe("monorepo subtree resolution", () => {
   });
 });
 
+describe("windsurf support", () => {
+  it("discovers and classifies .windsurfrules and .windsurf/rules/*.md", async () => {
+    const result = await scanFixture("windsurf-repo");
+    const byPath = new Map(result.surfaces.map((s) => [s.path, s]));
+    expect(byPath.get(".windsurfrules")?.kind).toBe("windsurf-rule");
+    expect(byPath.get(".windsurfrules")?.tools).toEqual(["windsurf"]);
+    expect(byPath.get(".windsurfrules")?.scope).toBe("repo-root");
+    expect(byPath.get(".windsurf/rules/always.md")?.kind).toBe("windsurf-rule");
+    expect(byPath.get(".windsurf/rules/always.md")?.tools).toEqual(["windsurf"]);
+    expect(byPath.get(".windsurf/rules/web.md")?.scope).toBe("repo-root");
+  });
+
+  it("parses windsurf rule frontmatter (trigger/globs) into surface meta", async () => {
+    const result = await scanFixture("windsurf-repo");
+    const web = result.surfaces.find((s) => s.path === ".windsurf/rules/web.md");
+    expect(web?.meta?.trigger).toBe("glob");
+    expect(web?.meta?.globs).toEqual(["src/**"]);
+    const always = result.surfaces.find((s) => s.path === ".windsurf/rules/always.md");
+    expect(always?.meta?.trigger).toBe("always_on");
+  });
+
+  it("resolves the windsurf effective context with correct activation", async () => {
+    const result = await scanFixture("windsurf-repo");
+    const context = result.effectiveContexts.find(
+      (c) => c.tool === "windsurf" && c.directory === ".",
+    );
+    expect(context).toBeDefined();
+    const entry = (p: string) => context?.surfaces.find((e) => e.surface.path === p);
+    expect(entry(".windsurfrules")?.conditional).toBeFalsy();
+    expect(entry(".windsurf/rules/always.md")?.conditional).toBeFalsy();
+    expect(entry(".windsurf/rules/web.md")?.conditional).toBe(true);
+  });
+
+  it("detects duplication between AGENTS.md and windsurf rules across tools", async () => {
+    const result = await scanFixture("windsurf-repo");
+    const dupes = result.findings.filter((f) => f.category === "duplication");
+    expect(dupes.length).toBeGreaterThan(0);
+    // AGENTS.md outranks windsurf rules — the windsurf copy is the one to delete.
+    const plan = (await import("../src/fix/planner.js")).planFixes(result, new Map());
+    const deletes = plan.fixes.filter((f) => f.safe && f.kind === "delete-rule");
+    expect(deletes.length).toBeGreaterThan(0);
+    expect(deletes[0]?.edits[0]?.file).toBe(".windsurfrules");
+  });
+});
+
 describe("discovery edge cases", () => {
   it("rejects a nonexistent scan root with a clear error", async () => {
     await expect(

@@ -38,6 +38,8 @@ const SURFACE_PATTERNS = [
   "**/.cursor/rules/*.mdc",
   ".github/copilot-instructions.md",
   "**/.cursorrules",
+  "**/.windsurfrules",
+  "**/.windsurf/rules/*.md",
   "**/.claude/skills/*/SKILL.md",
 ];
 
@@ -60,6 +62,10 @@ export function classifySurface(relPath: string): { kind: SurfaceKind; tools: To
   if (relPath === ".github/copilot-instructions.md") {
     return { kind: "copilot-instructions", tools: ["copilot"] };
   }
+  // .windsurfrules: legacy single-file format — deprecated but still read.
+  if (base === ".windsurfrules" || relPath.includes(".windsurf/rules/")) {
+    return { kind: "windsurf-rule", tools: ["windsurf"] };
+  }
   if (base === "SKILL.md") return { kind: "skill", tools: ["claude-code"] };
   // .cursorrules: legacy Cursor format, deprecated. Treated as loaded by no
   // current tool (confidence: assumed) so it surfaces as a load-semantics finding.
@@ -75,6 +81,9 @@ function scopeOf(relPath: string, kind: SurfaceKind): SurfaceScope {
     case "cursor-rule":
       // ".cursor/rules/x.mdc" is depth 3 at the root.
       return depth === 3 ? "repo-root" : "subtree";
+    case "windsurf-rule":
+      // ".windsurfrules" is depth 1 at the root; ".windsurf/rules/x.md" is depth 3.
+      return depth === (relPath.includes(".windsurf/rules/") ? 3 : 1) ? "repo-root" : "subtree";
     default:
       return "repo-root";
   }

@@ -13,7 +13,8 @@ export function buildProgram(): Command {
     .name("ctxlint")
     .description(
       "Audit, profile, and score the context files steering AI coding agents\n" +
-        "(AGENTS.md, CLAUDE.md, .cursor/rules/*.mdc, copilot-instructions.md, skills).",
+        "(AGENTS.md, CLAUDE.md, .cursor/rules/*.mdc, copilot-instructions.md,\n" +
+        ".windsurf/rules/*.md, skills).",
     )
     .version(pkg.version)
     .showHelpAfterError();
