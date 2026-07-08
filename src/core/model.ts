@@ -52,7 +52,11 @@ export type RuleKind = "imperative" | "context" | "structure-claim" | "command" 
 
 /** One atomic instruction extracted from a surface. */
 export interface Rule {
-  /** surfaceId + ordinal. */
+  /**
+   * surfaceId + content hash of the normalized rule text, so identity survives
+   * reformatting and reordering. Duplicate text in one surface appends an
+   * occurrence suffix (`.2`, `.3`, …).
+   */
   id: string;
   surfaceId: string;
   /** Normalized single instruction. */

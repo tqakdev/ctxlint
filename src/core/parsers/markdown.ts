@@ -1,6 +1,7 @@
 import type { Code, Heading, List, ListItem, Node, Paragraph, Parent, Root } from "mdast";
 import remarkParse from "remark-parse";
 import { unified } from "unified";
+import { sha1Hex } from "../hash.js";
 import type { Rule, RuleKind, Surface } from "../model.js";
 
 const processor = unified().use(remarkParse);
@@ -169,13 +170,18 @@ export function extractRules(surface: Surface, root?: Root): Rule[] {
   const tree = root ?? parseMarkdown(surface.raw);
   const rules: Rule[] = [];
   const headings: string[] = [];
-  let ordinal = 0;
+  // Duplicate text in one surface gets an occurrence suffix (hash, hash.2, …)
+  // so ids stay unique while the first occurrence keeps the bare hash.
+  const seen = new Map<string, number>();
 
   const push = (text: string, codeSpans: string[], node: Node, kind?: RuleKind) => {
     if (text.trim() === "") return;
     const referencedPaths = extractReferences(text, codeSpans);
+    const hash = sha1Hex(text);
+    const occurrence = (seen.get(hash) ?? 0) + 1;
+    seen.set(hash, occurrence);
     rules.push({
-      id: `${surface.id}:${ordinal}`,
+      id: `${surface.id}:${hash}${occurrence > 1 ? `.${occurrence}` : ""}`,
       surfaceId: surface.id,
       text,
       section: [...headings],
@@ -183,7 +189,6 @@ export function extractRules(surface: Surface, root?: Root): Rule[] {
       kind: kind ?? classifyRule(text, referencedPaths),
       referencedPaths,
     });
-    ordinal += 1;
   };
 
   const visitBlock = (node: Node, depth: number): void => {

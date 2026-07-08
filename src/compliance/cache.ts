@@ -1,6 +1,6 @@
-import { createHash } from "node:crypto";
 import { mkdir, readFile, writeFile } from "node:fs/promises";
 import path from "node:path";
+import { sha1Hex } from "../core/hash.js";
 
 export interface CachedVerdict {
   verdict: "followed" | "violated" | "not-applicable";
@@ -10,7 +10,7 @@ export interface CachedVerdict {
 }
 
 export function ruleHash(ruleText: string): string {
-  return createHash("sha1").update(ruleText).digest("hex").slice(0, 12);
+  return sha1Hex(ruleText);
 }
 
 export function cacheKey(ruleTextHash: string, chunkHash: string, model: string): string {
