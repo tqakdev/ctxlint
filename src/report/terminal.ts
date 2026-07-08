@@ -109,6 +109,14 @@ export function renderTerminal(data: ReportData): string {
   }
   lines.push("");
   lines.push(pc.dim(`Token counts: ${data.tokenNote}.`));
+  if (data.toolBehavior.length > 0) {
+    const oldest = data.toolBehavior.reduce((a, b) => (a.lastVerified <= b.lastVerified ? a : b));
+    lines.push(
+      pc.dim(
+        `Load-order model verified against tool docs on ${oldest.lastVerified} — full provenance in --format md/json.`,
+      ),
+    );
+  }
   lines.push("");
   return lines.join("\n");
 }

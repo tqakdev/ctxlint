@@ -1,10 +1,20 @@
 import type { Finding, SurfaceKind, SurfaceScope, ToolId } from "../core/model.js";
 import type { ScanResult } from "../core/pipeline.js";
+import { TOOL_BEHAVIOR } from "../core/resolvers/toolBehavior.js";
 import type { ScoreReport } from "../core/scoring.js";
+
+/** Where a finding lives on disk — resolved from its rules (or surfaces). */
+export interface FindingLocation {
+  path: string;
+  startLine: number;
+  endLine: number;
+}
+
+export type ReportFinding = Finding & { locations: FindingLocation[] };
 
 /** Serializable report payload — written to the cache and fed to renderers. */
 export interface ReportData {
-  version: 1;
+  version: 2;
   generatedAt: string;
   root: string;
   tokenNote: string;
@@ -34,7 +44,43 @@ export interface ReportData {
       conditional: boolean;
     }[];
   }[];
-  findings: Finding[];
+  /** Provenance of the load-order model for each tool present in the scan. */
+  toolBehavior: {
+    tool: ToolId;
+    docsUrl: string;
+    lastVerified: string;
+    assumptions: string[];
+  }[];
+  findings: ReportFinding[];
+}
+
+/** Resolve a finding to file/line locations via its rules, else its surfaces. */
+function locateFinding(
+  finding: Finding,
+  ruleById: Map<string, { surfaceId: string; span: { startLine: number; endLine: number } }>,
+  surfacePathById: Map<string, string>,
+): FindingLocation[] {
+  const locations: FindingLocation[] = [];
+  const seen = new Set<string>();
+  const add = (location: FindingLocation) => {
+    const key = `${location.path}:${location.startLine}:${location.endLine}`;
+    if (!seen.has(key)) {
+      seen.add(key);
+      locations.push(location);
+    }
+  };
+  for (const ruleId of finding.ruleIds) {
+    const rule = ruleById.get(ruleId);
+    const path = rule && surfacePathById.get(rule.surfaceId);
+    if (rule && path) add({ path, startLine: rule.span.startLine, endLine: rule.span.endLine });
+  }
+  if (locations.length === 0) {
+    for (const surfaceId of finding.surfaceIds) {
+      const path = surfacePathById.get(surfaceId);
+      if (path) add({ path, startLine: 1, endLine: 1 });
+    }
+  }
+  return locations;
 }
 
 export function buildReportData(result: ScanResult, generatedAt = new Date()): ReportData {
@@ -42,8 +88,10 @@ export function buildReportData(result: ScanResult, generatedAt = new Date()): R
   for (const rule of result.rules) {
     ruleCounts.set(rule.surfaceId, (ruleCounts.get(rule.surfaceId) ?? 0) + 1);
   }
+  const ruleById = new Map(result.rules.map((r) => [r.id, r]));
+  const surfacePathById = new Map(result.surfaces.map((s) => [s.id, s.path]));
   return {
-    version: 1,
+    version: 2,
     generatedAt: generatedAt.toISOString(),
     root: result.root,
     tokenNote: result.tokens.label,
@@ -79,7 +127,14 @@ export function buildReportData(result: ScanResult, generatedAt = new Date()): R
         conditional: entry.conditional ?? false,
       })),
     })),
-    findings: result.findings,
+    toolBehavior: [...new Set(result.effectiveContexts.map((c) => c.tool))].map((tool) => ({
+      tool,
+      ...TOOL_BEHAVIOR[tool],
+    })),
+    findings: result.findings.map((finding) => ({
+      ...finding,
+      locations: locateFinding(finding, ruleById, surfacePathById),
+    })),
   };
 }
 

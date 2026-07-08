@@ -25,7 +25,7 @@ export async function reportCommand(options: ReportCliOptions): Promise<void> {
   let data: ReportData;
   try {
     data = JSON.parse(raw) as ReportData;
-    if (data.version !== 1) throw new Error(`unsupported cache version ${data.version}`);
+    if (data.version !== 2) throw new Error(`unsupported cache version ${data.version}`);
   } catch (error) {
     process.stderr.write(
       `ctxlint: cached scan is unreadable (${(error as Error).message}) — re-run \`ctxlint scan\`.\n`,

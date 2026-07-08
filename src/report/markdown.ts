@@ -60,6 +60,19 @@ export function renderMarkdown(data: ReportData): string {
     lines.push("");
   }
 
+  if (data.toolBehavior.length > 0) {
+    lines.push("### Load-order model provenance");
+    lines.push("");
+    lines.push("| tool | docs | verified | assumptions |");
+    lines.push("|---|---|---|---|");
+    for (const behavior of data.toolBehavior) {
+      lines.push(
+        `| ${behavior.tool} | ${behavior.docsUrl} | ${behavior.lastVerified} | ${behavior.assumptions.join("; ") || "—"} |`,
+      );
+    }
+    lines.push("");
+  }
+
   lines.push(`## Findings (${counts.error} error, ${counts.warn} warning, ${counts.info} info)`);
   lines.push("");
   if (data.findings.length === 0) {
