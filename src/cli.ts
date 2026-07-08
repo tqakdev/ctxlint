@@ -22,7 +22,7 @@ export function buildProgram(): Command {
   program
     .command("scan [path]", { isDefault: true })
     .description("statically analyze context files: findings, health score, effective contexts")
-    .option("--format <format>", "output format: text | json | md", "text")
+    .option("--format <format>", "output format: text | json | md | sarif", "text")
     .option("--output <file>", "write the report to a file instead of stdout")
     .option("--ci", "exit with code 1 when error-severity findings exist")
     .option("--max-files <n>", "hard cap on files walked during discovery")
@@ -54,7 +54,7 @@ export function buildProgram(): Command {
   program
     .command("report")
     .description("regenerate the last report from cached results without re-scanning")
-    .option("--format <format>", "output format: text | json | md", "text")
+    .option("--format <format>", "output format: text | json | md | sarif", "text")
     .option("--output <file>", "write the report to a file instead of stdout")
     .action(async (options) => {
       const { reportCommand } = await import("./commands/report.js");

@@ -87,9 +87,14 @@ Discovers every context surface (respecting `.gitignore` and `discovery.exclude`
 skipping symlinks and files over 1 MB), splits them into atomic rules, resolves
 per-tool load semantics, runs five analyzers, and prints the report.
 
+Load-order semantics are modeled from each tool's official docs; the report carries
+the doc link, a last-verified date, and every assumption the model makes (the
+"Load-order model provenance" table in `--format md`/`json`), so when a tool changes
+behavior the stale assumption is visible instead of silently wrong.
+
 | flag | what it does |
 |---|---|
-| `--format text\|json\|md` | output format (default `text`) |
+| `--format text\|json\|md\|sarif` | output format (default `text`); `sarif` plugs into GitHub code scanning |
 | `--output <file>` | write the report to a file |
 | `--ci` | exit 1 when error-severity findings exist |
 | `--max-files <n>` | cap the discovery walk on huge monorepos |
@@ -154,6 +159,18 @@ jobs:
 
 The action also writes the report to the job summary and exposes `score` and `errors`
 as outputs.
+
+### GitHub code scanning (SARIF)
+
+Findings can land in the repo's Security tab — with file/line annotations on PRs —
+via the standard SARIF upload:
+
+```yaml
+      - run: npx @tqakdev/ctxlint scan --format sarif --output ctxlint.sarif
+      - uses: github/codeql-action/upload-sarif@v3
+        with:
+          sarif_file: ctxlint.sarif
+```
 
 ## Pre-commit hook
 

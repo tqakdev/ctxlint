@@ -7,6 +7,7 @@ import { createExactCounter } from "../core/tokens.js";
 import { buildReportData, countBySeverity, type ReportData } from "../report/data.js";
 import { renderJson } from "../report/json.js";
 import { renderMarkdown } from "../report/markdown.js";
+import { renderSarif } from "../report/sarif.js";
 import { renderTerminal } from "../report/terminal.js";
 
 export interface ScanCliOptions {
@@ -25,10 +26,12 @@ export function renderReport(data: ReportData, format: string): string {
       return renderJson(data);
     case "md":
       return renderMarkdown(data);
+    case "sarif":
+      return renderSarif(data);
     case "text":
       return renderTerminal(data);
     default:
-      throw new Error(`unknown --format "${format}" (expected text | json | md)`);
+      throw new Error(`unknown --format "${format}" (expected text | json | md | sarif)`);
   }
 }
 
