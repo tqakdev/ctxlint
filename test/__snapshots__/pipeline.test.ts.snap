@@ -165,13 +165,13 @@ exports[`M1 pipeline snapshots > messy-repo 1`] = `
   ],
   "score": {
     "subscores": {
-      "budget": 80,
-      "consistency": 70,
+      "budget": 82,
+      "consistency": 76,
       "freshness": 0,
-      "structure": 82,
-      "uniqueness": 0,
+      "structure": 84,
+      "uniqueness": 8,
     },
-    "total": 42,
+    "total": 46,
   },
   "surfaces": [
     {

@@ -40,8 +40,8 @@ Running `ctxlint scan` on a repo with hand-maintained, drifted context files:
 ```text
 ctxlint — 5 context file(s), 95 rules
 
-Context Health Score: 42/100
-  freshness 0  uniqueness 0  consistency 70  budget 80  structure 82
+Context Health Score: 46/100
+  freshness 0  uniqueness 8  consistency 76  budget 82  structure 84
 
 Context files
   file                             kind                  tools        tokens≈  rules
@@ -83,9 +83,9 @@ Findings: 15 error(s), 6 warning(s), 2 info
 
 ### `ctxlint scan [path]` — static analysis (default command)
 
-Discovers every context surface (respecting `.gitignore`, skipping symlinks and files
-over 1 MB), splits them into atomic rules, resolves per-tool load semantics, runs five
-analyzers, and prints the report.
+Discovers every context surface (respecting `.gitignore` and `discovery.exclude`,
+skipping symlinks and files over 1 MB), splits them into atomic rules, resolves
+per-tool load semantics, runs five analyzers, and prints the report.
 
 | flag | what it does |
 |---|---|
@@ -199,6 +199,7 @@ change something (schema in [`ctxlint.config.schema.json`](./ctxlint.config.sche
 | budgets | `effectiveContextWarnTokens` | 4000 | warn when one tool's always-on context exceeds this |
 | budgets | `buriedRuleDepthRatio` | 0.7 | flag critical rules deeper than this fraction of an oversized file |
 | discovery | `maxFiles` | 20000 | hard cap on the repo walk (`--max-files` overrides) |
+| discovery | `exclude` | `[]` | globs for context files that are not live surfaces (test fixtures, examples) — skipped by analysis but kept in the repo index, so references to them stay valid |
 | analysis | `maxRules` | 5000 | pairwise analyzers bail gracefully above this |
 | compliance | `model` / `calibrationModel` | haiku / sonnet | judge and second-opinion models |
 | compliance | `spendCapUsd` | 1 | require `--yes` above this estimated spend |
@@ -212,8 +213,10 @@ Honesty section. Read this before trusting a number.
   more for CJK-heavy content. With `ANTHROPIC_API_KEY` set, `scan` fetches exact
   Anthropic counts and labels them exact.
 - **The Context Health Score is deterministic, not divine.** Same input, same score —
-  the formula is documented in `src/core/scoring.ts` (five weighted subscores, fixed
-  penalties per finding). It's a trend instrument: watch it move in CI, don't worship
+  the formula is documented in `src/core/scoring.ts` (five weighted subscores; per-finding
+  penalties of 25/10/4 for error/warn/info, each repeat within a subscore counting 0.8×
+  the previous so one bad file can't flatline the whole subscore, though ~8 errors still
+  drive it to 0). It's a trend instrument: watch it move in CI, don't worship
   the absolute number.
 - **Compliance verdicts are judge-based.** An LLM reads a rule and a diff and gives an
   opinion. Run `--calibrate` to measure cross-model agreement; below 80% the report

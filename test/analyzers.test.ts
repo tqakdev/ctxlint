@@ -124,10 +124,19 @@ describe("M2 acceptance: scores", () => {
     expect(scoreFindings([]).total).toBe(100);
     // One stale-reference error: freshness 75 -> total 100 - 0.25*25 = 93.75 -> 94
     expect(scoreFindings([finding("stale-reference", "error")]).total).toBe(94);
-    // Errors floor a subscore at 0, never below.
-    const five = Array.from({ length: 5 }, () => finding("duplication", "error"));
-    expect(scoreFindings(five).subscores.uniqueness).toBe(0);
-    expect(scoreFindings([...five, finding("duplication", "error")]).subscores.uniqueness).toBe(0);
+    // Repeat findings decay (x0.8 each): 5 errors = 25*(1+.8+.64+.512+.4096) ~ 84 -> 16,
+    // so the subscore keeps moving instead of saturating at 0 after 4 errors.
+    const errors = (n: number) => Array.from({ length: n }, () => finding("duplication", "error"));
+    expect(scoreFindings(errors(5)).subscores.uniqueness).toBe(16);
+    expect(scoreFindings(errors(6)).subscores.uniqueness).toBe(8);
+    // Enough errors still floor the subscore at 0, never below.
+    expect(scoreFindings(errors(8)).subscores.uniqueness).toBe(0);
+    expect(scoreFindings(errors(15)).subscores.uniqueness).toBe(0);
+    // More findings never raise a subscore.
+    const warns = Array.from({ length: 3 }, () => finding("duplication", "warn"));
+    expect(scoreFindings([...errors(2), ...warns]).subscores.uniqueness).toBeLessThan(
+      scoreFindings(errors(2)).subscores.uniqueness,
+    );
   });
 });
 
