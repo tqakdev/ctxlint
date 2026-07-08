@@ -41,6 +41,12 @@
           "type": "number",
           "default": 1048576,
           "description": "Context files larger than this are skipped with a warn finding."
+        },
+        "exclude": {
+          "type": "array",
+          "items": { "type": "string" },
+          "default": [],
+          "description": "Glob patterns for context files that are not live surfaces (test fixtures, examples, templates). Excluded files stay in the repo index, so references to them remain valid — they just aren't parsed, scored, or resolved."
         }
       }
     },

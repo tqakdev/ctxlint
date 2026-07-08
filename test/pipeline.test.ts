@@ -1,6 +1,8 @@
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { describe, expect, it } from "vitest";
+import { DEFAULT_CONFIG } from "../src/config.js";
+import { excludeToGlobs } from "../src/core/discovery.js";
 import type { ScanResult } from "../src/core/pipeline.js";
 import { runScan } from "../src/core/pipeline.js";
 
@@ -133,6 +135,46 @@ describe("windsurf support", () => {
     const deletes = plan.fixes.filter((f) => f.safe && f.kind === "delete-rule");
     expect(deletes.length).toBeGreaterThan(0);
     expect(deletes[0]?.edits[0]?.file).toBe(".windsurfrules");
+  });
+});
+
+describe("discovery.exclude", () => {
+  function configExcluding(...exclude: string[]) {
+    return {
+      ...DEFAULT_CONFIG,
+      discovery: { ...DEFAULT_CONFIG.discovery, exclude },
+    };
+  }
+
+  it("excluded files are not surfaces but stay in the repo index", async () => {
+    const result = await runScan({
+      root: path.join(fixtures, "messy-repo"),
+      config: configExcluding(".cursor"),
+      userGlobalDir: null,
+    });
+    expect(result.surfaces.some((s) => s.path.startsWith(".cursor/"))).toBe(false);
+    expect(result.surfaces.some((s) => s.path === "CLAUDE.md")).toBe(true);
+    expect(result.index.fileSet.has(".cursor/rules/style.mdc")).toBe(true);
+  });
+
+  it("glob patterns are honored as written", async () => {
+    const result = await runScan({
+      root: path.join(fixtures, "messy-repo"),
+      config: configExcluding("**/*.mdc"),
+      userGlobalDir: null,
+    });
+    expect(result.surfaces.some((s) => s.path.endsWith(".mdc"))).toBe(false);
+    expect(result.surfaces.some((s) => s.path === "CLAUDE.md")).toBe(true);
+  });
+
+  it("bare paths also exclude their subtree; glob patterns pass through", () => {
+    expect(excludeToGlobs(["test/fixtures", "docs/"])).toEqual([
+      "test/fixtures",
+      "test/fixtures/**",
+      "docs",
+      "docs/**",
+    ]);
+    expect(excludeToGlobs(["examples/**/*.md", ""])).toEqual(["examples/**/*.md"]);
   });
 });
 

@@ -44,6 +44,22 @@ describe("loadConfig", () => {
     ).rejects.toThrow(ConfigError);
   });
 
+  it("accepts discovery.exclude as an array of strings", async () => {
+    const dir = await dirWithConfig('{"discovery": {"exclude": ["test/fixtures", "docs/**"]}}');
+    const config = await loadConfig(dir);
+    expect(config.discovery.exclude).toEqual(["test/fixtures", "docs/**"]);
+    expect(config.discovery.maxFiles).toBe(DEFAULT_CONFIG.discovery.maxFiles);
+  });
+
+  it("rejects discovery.exclude that is not an array of strings", async () => {
+    await expect(
+      loadConfig(await dirWithConfig('{"discovery": {"exclude": "test/fixtures"}}')),
+    ).rejects.toThrow(/"discovery.exclude" must be an array of strings/);
+    await expect(
+      loadConfig(await dirWithConfig('{"discovery": {"exclude": ["ok", 3]}}')),
+    ).rejects.toThrow(/"discovery.exclude" must be an array of strings/);
+  });
+
   it("rejects malformed JSON with the file named", async () => {
     await expect(loadConfig(await dirWithConfig("{nope"))).rejects.toThrow(/invalid JSON/);
   });

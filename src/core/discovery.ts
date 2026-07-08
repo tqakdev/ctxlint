@@ -28,6 +28,11 @@ export interface DiscoverOptions {
   root: string;
   maxFiles: number;
   maxSurfaceBytes: number;
+  /**
+   * Glob patterns for context files that are not live surfaces (fixtures,
+   * examples). Excluded files stay in the repo index used by staleness checks.
+   */
+  exclude?: string[];
   /** Directory holding user-global config (e.g. ~/.claude); null disables. */
   userGlobalDir?: string | null;
 }
@@ -87,6 +92,22 @@ function scopeOf(relPath: string, kind: SurfaceKind): SurfaceScope {
     default:
       return "repo-root";
   }
+}
+
+/**
+ * Expand config exclude patterns for fast-glob: a bare path like
+ * "test/fixtures" also excludes everything beneath it; patterns that already
+ * contain glob magic are passed through untouched.
+ */
+export function excludeToGlobs(exclude: string[]): string[] {
+  const out: string[] = [];
+  for (const raw of exclude) {
+    const pattern = raw.replace(/\/$/, "");
+    if (pattern === "") continue;
+    out.push(pattern);
+    if (!/[*?[\]{}()!]/.test(pattern)) out.push(`${pattern}/**`);
+  }
+  return out;
 }
 
 /** Convert root .gitignore lines into fast-glob ignore patterns (best effort). */
@@ -208,6 +229,8 @@ export async function discover(options: DiscoverOptions): Promise<DiscoveryResul
     }
   }
 
+  // Config excludes apply only here: excluded files are not surfaces, but they
+  // remain in the index above so references to them are still valid.
   const surfacePaths = (
     await fg(SURFACE_PATTERNS, {
       cwd: root,
@@ -215,7 +238,7 @@ export async function discover(options: DiscoverOptions): Promise<DiscoveryResul
       onlyFiles: true,
       followSymbolicLinks: false,
       suppressErrors: true,
-      ignore,
+      ignore: [...ignore, ...excludeToGlobs(options.exclude ?? [])],
     })
   )
     .map(toPosix)

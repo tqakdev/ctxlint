@@ -61,6 +61,7 @@ export async function runScan(options: ScanOptions): Promise<ScanResult> {
     root: options.root,
     maxFiles: options.maxFiles ?? config.discovery.maxFiles,
     maxSurfaceBytes: config.discovery.maxSurfaceBytes,
+    exclude: config.discovery.exclude,
     userGlobalDir: options.userGlobalDir ?? null,
   });
 

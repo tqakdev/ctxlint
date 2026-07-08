@@ -1,0 +1,6 @@
+{
+  "$schema": "./ctxlint.config.schema.json",
+  "discovery": {
+    "exclude": ["test/fixtures"]
+  }
+}

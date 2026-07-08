@@ -44,6 +44,12 @@ export interface DiscoveryConfig {
   maxFiles: number;
   /** Surfaces larger than this are skipped with a warn finding. */
   maxSurfaceBytes: number;
+  /**
+   * Glob patterns for context files that are not live surfaces (test fixtures,
+   * examples, templates). Excluded files stay in the repo index, so references
+   * to them are still valid — they just aren't parsed, scored, or resolved.
+   */
+  exclude: string[];
 }
 
 export interface AnalysisConfig {
@@ -84,6 +90,7 @@ export const DEFAULT_CONFIG: CtxlintConfig = {
   discovery: {
     maxFiles: 20000,
     maxSurfaceBytes: 1024 * 1024,
+    exclude: [],
   },
   analysis: {
     maxRules: 5000,
@@ -134,6 +141,13 @@ function mergeSection<T extends object>(
   for (const [key, value] of Object.entries(override)) {
     if (!(key in defaults)) {
       throw new ConfigError(`unknown option "${sectionName}.${key}"`, file);
+    }
+    if (Array.isArray(merged[key])) {
+      if (!Array.isArray(value) || value.some((item) => typeof item !== "string")) {
+        throw new ConfigError(`"${sectionName}.${key}" must be an array of strings`, file);
+      }
+      merged[key] = value;
+      continue;
     }
     const expected = typeof merged[key];
     if (typeof value !== expected) {
