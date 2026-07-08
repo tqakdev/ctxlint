@@ -75,11 +75,17 @@ const EXCLUDED_FIRST_SEGMENTS = new Set([
 
 const EXCLUDED_FILES = new Set(["package-lock.json", "pnpm-lock.yaml", "yarn.lock"]);
 
+/** Filename-convention placeholders ("Source files: `kebab-case.ts`"). */
+const NAMING_CONVENTION =
+  /^(?:kebab-case|camelCase|PascalCase|snake_case|SCREAMING_SNAKE_CASE)(?:\.[\w-]+)*$/;
+
 function isExcludedRef(ref: string): boolean {
   if (/^\.env(?!\.(?:example|sample))/.test(ref)) return true;
   const first = ref.split("/")[0] as string;
   if (EXCLUDED_FIRST_SEGMENTS.has(first)) return true;
-  if (EXCLUDED_FILES.has(ref.slice(ref.lastIndexOf("/") + 1))) return true;
+  const base = ref.slice(ref.lastIndexOf("/") + 1);
+  if (EXCLUDED_FILES.has(base)) return true;
+  if (NAMING_CONVENTION.test(base)) return true;
   return false;
 }
 

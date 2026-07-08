@@ -22,13 +22,37 @@ function join(dir: string, rel: string): string {
   return dir === "." ? rel : `${dir}/${rel}`;
 }
 
-function pathExists(ref: string, dir: string, facts: RepoFacts): boolean {
-  const candidates = dir === "." ? [ref] : [join(dir, ref), ref];
-  for (const raw of candidates) {
-    const candidate = raw.replace(/^\.\//, "").replace(/\/$/, "");
-    if (facts.fileSet.has(candidate) || facts.dirSet.has(candidate)) return true;
+/** Resolve "." / ".." segments; null when the path escapes the repo root. */
+function normalizeSegments(p: string): string | null {
+  const out: string[] = [];
+  for (const segment of p.split("/")) {
+    if (segment === "" || segment === ".") continue;
+    if (segment === "..") {
+      if (out.length === 0) return null;
+      out.pop();
+    } else {
+      out.push(segment);
+    }
   }
-  return false;
+  return out.join("/");
+}
+
+function pathExists(ref: string, dir: string, facts: RepoFacts): boolean {
+  // "sdk" + "./X" must become "sdk/X" and "a/b" + "../X" must become "a/X",
+  // else ./- and ../-prefixed references from subdirectory surfaces can never
+  // resolve (found on the cline and opencode benchmark repos).
+  const raws = dir === "." ? [ref] : [join(dir, ref), ref];
+  let judgeable = false;
+  for (const raw of raws) {
+    const candidate = normalizeSegments(raw.replace(/\/$/, ""));
+    if (candidate === null) continue; // escapes the repo from this base
+    judgeable = true;
+    if (candidate === "" || facts.fileSet.has(candidate) || facts.dirSet.has(candidate)) {
+      return true;
+    }
+  }
+  // Escapes the repo from every base — unjudgeable, so never flag it.
+  return !judgeable;
 }
 
 function globExists(ref: string, dir: string, facts: RepoFacts): boolean {
@@ -96,6 +120,11 @@ export function analyzeStaleness(
         what = `the npm script "${script}"`;
         if (!scripts) continue; // No package.json found — can't judge.
       } else if (ref.includes("*") || ref.includes("?")) {
+        // Slash-namespace tokens (GitHub Action owners `actions/*`, MIME types
+        // `text/*`, event names `raw/*`) and directory-less extension globs
+        // (`*.orig`) are pattern mentions, not location claims: only judge
+        // globs anchored in a directory that exists in this repo.
+        if (!ref.includes("/") || !isCredibleWeakRef(ref, dir, facts)) continue;
         exists = globExists(ref, dir, facts);
         what = `files matching \`${ref}\``;
       } else {
