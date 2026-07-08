@@ -249,6 +249,33 @@ Honesty section. Read this before trusting a number.
 - **Pairwise analysis is O(n²).** Above 5000 rules (configurable), duplication/drift
   analysis bails gracefully with a note rather than hanging your CI.
 
+## Benchmark: measured precision on real repos
+
+Every finding ctxlint produced on seven pinned open-source repos (openai/codex,
+sst/opencode, All-Hands-AI/OpenHands, cline/cline, block/goose, vercel/ai,
+browser-use/browser-use — `bench/corpus.json`) was hand-labeled true/false
+positive against the actual checkout (`bench/labels.json`, 177 findings):
+
+| category | precision | tp / fp | notes |
+|---|---:|---|---|
+| budget | 98% | 57 / 1 | token math is token math |
+| duplication | 100% | 2 / 0 | small sample |
+| stale-reference | 52% | 59 / 54 | see below |
+| contradiction | 33% | 1 / 2 | small sample |
+| structure | 0% | 0 / 1 | small sample |
+| **overall** | **67%** | **119 / 58** | |
+
+The stale-reference number is the honest one: the true positives include an
+entire rotted `copilot-instructions.md` (cline restructured; `src/`, `proto/`,
+`webview-ui/` are gone) and OpenHands' post-refactor doc drift — exactly what
+the analyzer exists to catch. The false positives cluster into conventions the
+resolver doesn't model yet: package-relative paths in nested AGENTS.md files,
+import-specifier quotes (`./native-request`), files referenced by bare name,
+and prose like "when `.pr/` exists". Each labeled fp is a regression target.
+
+Reproduce with `pnpm bench` (clones the pinned SHAs, ~200 MB); `pnpm bench
+--check` fails if analyzer output drifts from the committed snapshots.
+
 ## Development
 
 ```sh

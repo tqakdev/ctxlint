@@ -1,0 +1,44 @@
+[
+  {
+    "name": "openhands",
+    "repo": "All-Hands-AI/OpenHands",
+    "sha": "ede3d75eb06f24312772ae74285b69e164568835",
+    "note": "large agent platform; root AGENTS.md with many structure claims"
+  },
+  {
+    "name": "vercel-ai",
+    "repo": "vercel/ai",
+    "sha": "0363440e8b3592e8a59f3f74232841c9bfeabf0e",
+    "note": "monorepo; root + package-level AGENTS.md"
+  },
+  {
+    "name": "browser-use",
+    "repo": "browser-use/browser-use",
+    "sha": "cf2c921d7df90c8b707f9008cc5e7f5a37c872a4",
+    "note": "AGENTS.md and CLAUDE.md side by side — cross-tool duplication surface"
+  },
+  {
+    "name": "cline",
+    "repo": "cline/cline",
+    "sha": "90c427740d29edf3431f9ecc8c1fbfa5ef70dfe4",
+    "note": "copilot-instructions + nested sdk AGENTS.md; heavy stale-reference load"
+  },
+  {
+    "name": "codex",
+    "repo": "openai/codex",
+    "sha": "f1affbac5e5164b2bae825e9b39e9868bc4e0be2",
+    "note": "root AGENTS.md plus deeply nested subtree AGENTS.md"
+  },
+  {
+    "name": "goose",
+    "repo": "block/goose",
+    "sha": "ce53dd5526c6935e538e81e47614a9b30cd2a137",
+    "note": "7 surfaces: paired AGENTS.md/CLAUDE.md at three levels — drift material"
+  },
+  {
+    "name": "opencode",
+    "repo": "sst/opencode",
+    "sha": "77429f59823c8c6df9cfee95d4c663043b017f46",
+    "note": "15 AGENTS.md across a monorepo — largest surface count in the corpus"
+  }
+]

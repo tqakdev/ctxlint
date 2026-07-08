@@ -1,0 +1,48 @@
+{
+  "name": "goose",
+  "repo": "block/goose",
+  "sha": "ce53dd5526c6935e538e81e47614a9b30cd2a137",
+  "score": 81,
+  "stats": {
+    "surfaces": 7,
+    "rules": 170
+  },
+  "findings": [
+    {
+      "key": "3b9b81ca8e6b",
+      "severity": "error",
+      "category": "stale-reference",
+      "message": "AGENTS.md:107-107 references `ui/desktop/src/api` which does not exist — actively misleading the agent. Update the reference or delete the rule."
+    },
+    {
+      "key": "c567c5d08309",
+      "severity": "error",
+      "category": "stale-reference",
+      "message": "AGENTS.md:73-73 references `providers/base.rs` which does not exist — actively misleading the agent. Update the reference or delete the rule."
+    },
+    {
+      "key": "a759d716eb72",
+      "severity": "error",
+      "category": "stale-reference",
+      "message": "AGENTS.md:75-75 references `ui/desktop/src/api` which does not exist — actively misleading the agent. Update the reference or delete the rule."
+    },
+    {
+      "key": "e29f0a302f17",
+      "severity": "warn",
+      "category": "budget",
+      "message": "1 critical rule(s) buried past 70% depth of an oversized file (ui/text/AGENTS.md, deepest at line 378 = 85%) — likely lost in long sessions. Move critical rules to the front."
+    },
+    {
+      "key": "eab35ee52dc8",
+      "severity": "warn",
+      "category": "budget",
+      "message": "copilot working in ui/text loads ≈5055 estimated tokens of always-on context (budget: 4000) — that cost recurs on every request. Trim the files it loads: .github/copilot-instructions.md (≈1077), AGENTS.md (≈1146), ui/text/AGENTS.md (≈2832)."
+    },
+    {
+      "key": "607053493c8f",
+      "severity": "warn",
+      "category": "budget",
+      "message": "ui/text/AGENTS.md is ≈2832 estimated tokens (budget: 1500) — it is injected on every request for claude-code, cursor, copilot, codex, generic-agents-md. Trim it or split rarely-needed sections into on-demand docs."
+    }
+  ]
+}

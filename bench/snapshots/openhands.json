@@ -1,0 +1,198 @@
+{
+  "name": "openhands",
+  "repo": "All-Hands-AI/OpenHands",
+  "sha": "ede3d75eb06f24312772ae74285b69e164568835",
+  "score": 69,
+  "stats": {
+    "surfaces": 1,
+    "rules": 220
+  },
+  "findings": [
+    {
+      "key": "dba829937fc9",
+      "severity": "error",
+      "category": "stale-reference",
+      "message": "AGENTS.md:105-105 references `.pr/` which does not exist — actively misleading the agent. Update the reference or delete the rule."
+    },
+    {
+      "key": "5b81d3482570",
+      "severity": "error",
+      "category": "stale-reference",
+      "message": "AGENTS.md:106-106 references `.pr/` which does not exist — actively misleading the agent. Update the reference or delete the rule."
+    },
+    {
+      "key": "158a20e3f8b5",
+      "severity": "error",
+      "category": "stale-reference",
+      "message": "AGENTS.md:111-111 references `.pr/` which does not exist — actively misleading the agent. Update the reference or delete the rule."
+    },
+    {
+      "key": "c147b38a87cc",
+      "severity": "error",
+      "category": "stale-reference",
+      "message": "AGENTS.md:112-112 references `.pr/` which does not exist — actively misleading the agent. Update the reference or delete the rule."
+    },
+    {
+      "key": "5a1a10e6a2b0",
+      "severity": "error",
+      "category": "stale-reference",
+      "message": "AGENTS.md:113-113 references `.pr/` which does not exist — actively misleading the agent. Update the reference or delete the rule."
+    },
+    {
+      "key": "88c15fd189bf",
+      "severity": "error",
+      "category": "stale-reference",
+      "message": "AGENTS.md:143-145 references `frontend/.env` which does not exist — actively misleading the agent. Update the reference or delete the rule."
+    },
+    {
+      "key": "3484247bdebd",
+      "severity": "error",
+      "category": "stale-reference",
+      "message": "AGENTS.md:159-159 references `openhands/app_server/integrations/vscode` which does not exist — actively misleading the agent. Update the reference or delete the rule."
+    },
+    {
+      "key": "5b663c7f016f",
+      "severity": "error",
+      "category": "stale-reference",
+      "message": "AGENTS.md:197-207 references `tests/unit/telemetry/` which does not exist — actively misleading the agent. Update the reference or delete the rule."
+    },
+    {
+      "key": "bb31c12f076d",
+      "severity": "error",
+      "category": "stale-reference",
+      "message": "AGENTS.md:251-251 references `conftest.py` which does not exist — actively misleading the agent. Update the reference or delete the rule."
+    },
+    {
+      "key": "f4db7085b54c",
+      "severity": "error",
+      "category": "stale-reference",
+      "message": "AGENTS.md:281-281 references `logs/` which does not exist — actively misleading the agent. Update the reference or delete the rule."
+    },
+    {
+      "key": "4eb8b4355d5b",
+      "severity": "error",
+      "category": "stale-reference",
+      "message": "AGENTS.md:327-327 references `microagents/` which does not exist — actively misleading the agent. Update the reference or delete the rule."
+    },
+    {
+      "key": "06c15cc0356f",
+      "severity": "error",
+      "category": "stale-reference",
+      "message": "AGENTS.md:348-348 references `frontend/src/types/action-type.ts` which does not exist — actively misleading the agent. Update the reference or delete the rule."
+    },
+    {
+      "key": "31ea70f25260",
+      "severity": "error",
+      "category": "stale-reference",
+      "message": "AGENTS.md:349-349 references `frontend/src/state/chat-slice.ts` which does not exist — actively misleading the agent. Update the reference or delete the rule."
+    },
+    {
+      "key": "43375bb5a169",
+      "severity": "error",
+      "category": "stale-reference",
+      "message": "AGENTS.md:380-385 references `use-add-mcp-server.ts` which does not exist — actively misleading the agent. Update the reference or delete the rule."
+    },
+    {
+      "key": "6667fcb2f93f",
+      "severity": "error",
+      "category": "stale-reference",
+      "message": "AGENTS.md:380-385 references `use-delete-mcp-server.ts` which does not exist — actively misleading the agent. Update the reference or delete the rule."
+    },
+    {
+      "key": "273683b49279",
+      "severity": "error",
+      "category": "stale-reference",
+      "message": "AGENTS.md:409-415 references `frontend/src/utils/verified-models.ts` which does not exist — actively misleading the agent. Update the reference or delete the rule."
+    },
+    {
+      "key": "11e136fdf371",
+      "severity": "error",
+      "category": "stale-reference",
+      "message": "AGENTS.md:417-419 references `openhands/cli/utils.py` which does not exist — actively misleading the agent. Update the reference or delete the rule."
+    },
+    {
+      "key": "21e51fde6bf7",
+      "severity": "error",
+      "category": "stale-reference",
+      "message": "AGENTS.md:421-424 references `openhands/utils/llm.py` which does not exist — actively misleading the agent. Update the reference or delete the rule."
+    },
+    {
+      "key": "f42352f7fc9e",
+      "severity": "error",
+      "category": "stale-reference",
+      "message": "AGENTS.md:426-431 references `openhands/llm/llm.py` which does not exist — actively misleading the agent. Update the reference or delete the rule."
+    },
+    {
+      "key": "63c95518a56d",
+      "severity": "error",
+      "category": "stale-reference",
+      "message": "AGENTS.md:506-506 references `openhands/sdk/llm/llm.py` which does not exist — actively misleading the agent. Update the reference or delete the rule."
+    },
+    {
+      "key": "bdfd188888dd",
+      "severity": "error",
+      "category": "stale-reference",
+      "message": "AGENTS.md:507-507 references `openhands/workspace/cloud/workspace.py` which does not exist — actively misleading the agent. Update the reference or delete the rule."
+    },
+    {
+      "key": "15625653b205",
+      "severity": "error",
+      "category": "stale-reference",
+      "message": "AGENTS.md:508-508 references `tests/sdk/llm/test_llm_secret_source_api_key.py` which does not exist — actively misleading the agent. Update the reference or delete the rule."
+    },
+    {
+      "key": "e948454f3265",
+      "severity": "error",
+      "category": "stale-reference",
+      "message": "AGENTS.md:508-508 references `tests/workspace/test_cloud_workspace_sdk_settings.py` which does not exist — actively misleading the agent. Update the reference or delete the rule."
+    },
+    {
+      "key": "57e8246712f3",
+      "severity": "error",
+      "category": "stale-reference",
+      "message": "AGENTS.md:91-91 references `.pr/` which does not exist — actively misleading the agent. Update the reference or delete the rule."
+    },
+    {
+      "key": "b8698e9201cd",
+      "severity": "warn",
+      "category": "budget",
+      "message": "5 critical rule(s) buried past 70% depth of an oversized file (AGENTS.md, deepest at line 485 = 94%) — likely lost in long sessions. Move critical rules to the front."
+    },
+    {
+      "key": "d98d4c39e6c6",
+      "severity": "warn",
+      "category": "budget",
+      "message": "AGENTS.md is ≈6250 estimated tokens (budget: 1500) — it is injected on every request for claude-code, cursor, copilot, codex, generic-agents-md. Trim it or split rarely-needed sections into on-demand docs."
+    },
+    {
+      "key": "ae8d7cb9ceb3",
+      "severity": "warn",
+      "category": "budget",
+      "message": "claude-code working in . loads ≈6250 estimated tokens of always-on context (budget: 4000) — that cost recurs on every request. Trim the files it loads: AGENTS.md (≈6250)."
+    },
+    {
+      "key": "f5cc62ba84bb",
+      "severity": "warn",
+      "category": "budget",
+      "message": "codex working in . loads ≈6250 estimated tokens of always-on context (budget: 4000) — that cost recurs on every request. Trim the files it loads: AGENTS.md (≈6250)."
+    },
+    {
+      "key": "6a75744e7ebf",
+      "severity": "warn",
+      "category": "budget",
+      "message": "copilot working in . loads ≈6250 estimated tokens of always-on context (budget: 4000) — that cost recurs on every request. Trim the files it loads: AGENTS.md (≈6250)."
+    },
+    {
+      "key": "8749344044df",
+      "severity": "warn",
+      "category": "budget",
+      "message": "cursor working in . loads ≈6250 estimated tokens of always-on context (budget: 4000) — that cost recurs on every request. Trim the files it loads: AGENTS.md (≈6250)."
+    },
+    {
+      "key": "75f9a95b6aed",
+      "severity": "warn",
+      "category": "budget",
+      "message": "generic-agents-md working in . loads ≈6250 estimated tokens of always-on context (budget: 4000) — that cost recurs on every request. Trim the files it loads: AGENTS.md (≈6250)."
+    }
+  ]
+}

@@ -1,0 +1,186 @@
+{
+  "name": "codex",
+  "repo": "openai/codex",
+  "sha": "f1affbac5e5164b2bae825e9b39e9868bc4e0be2",
+  "score": 62,
+  "stats": {
+    "surfaces": 2,
+    "rules": 139
+  },
+  "findings": [
+    {
+      "key": "06fe670fd36d",
+      "severity": "error",
+      "category": "stale-reference",
+      "message": "AGENTS.md:161-161 references `tui/src/wrapping.rs` which does not exist — actively misleading the agent. Update the reference or delete the rule."
+    },
+    {
+      "key": "ec706081d566",
+      "severity": "error",
+      "category": "stale-reference",
+      "message": "AGENTS.md:264-264 references `app-server-protocol/src/protocol/common.rs` which does not exist — actively misleading the agent. Update the reference or delete the rule."
+    },
+    {
+      "key": "3b74b1472ef3",
+      "severity": "error",
+      "category": "stale-reference",
+      "message": "AGENTS.md:265-265 references `app-server-protocol/src/protocol/v2.rs` which does not exist — actively misleading the agent. Update the reference or delete the rule."
+    },
+    {
+      "key": "a9a968a2d91c",
+      "severity": "error",
+      "category": "stale-reference",
+      "message": "AGENTS.md:266-266 references `app-server/README.md` which does not exist — actively misleading the agent. Update the reference or delete the rule."
+    },
+    {
+      "key": "e2a572775a3b",
+      "severity": "error",
+      "category": "stale-reference",
+      "message": "AGENTS.md:276-276 references `app-server-protocol/src/protocol/v2.rs` which does not exist — actively misleading the agent. Update the reference or delete the rule."
+    },
+    {
+      "key": "a5d992b39637",
+      "severity": "error",
+      "category": "stale-reference",
+      "message": "AGENTS.md:286-287 references `common.rs` which does not exist — actively misleading the agent. Update the reference or delete the rule."
+    },
+    {
+      "key": "14df29bd6266",
+      "severity": "error",
+      "category": "stale-reference",
+      "message": "AGENTS.md:300-300 references `app-server/README.md` which does not exist — actively misleading the agent. Update the reference or delete the rule."
+    },
+    {
+      "key": "27a84588ca18",
+      "severity": "error",
+      "category": "stale-reference",
+      "message": "AGENTS.md:300-300 references `docs/examples` which does not exist — actively misleading the agent. Update the reference or delete the rule."
+    },
+    {
+      "key": "4762eeb98fcc",
+      "severity": "error",
+      "category": "stale-reference",
+      "message": "AGENTS.md:305-306 references `common.rs` which does not exist — actively misleading the agent. Update the reference or delete the rule."
+    },
+    {
+      "key": "2c6c429ba04a",
+      "severity": "error",
+      "category": "stale-reference",
+      "message": "AGENTS.md:314-315 references `pyproject.toml` which does not exist — actively misleading the agent. Update the reference or delete the rule."
+    },
+    {
+      "key": "a946c073ba2e",
+      "severity": "error",
+      "category": "stale-reference",
+      "message": "AGENTS.md:35-35 references `codex-rs/codex-mcp/src/mcp_connection_manager.rs` which does not exist — actively misleading the agent. Update the reference or delete the rule."
+    },
+    {
+      "key": "9c17575aad63",
+      "severity": "error",
+      "category": "stale-reference",
+      "message": "AGENTS.md:37-39 references `Cargo.toml` which does not exist — actively misleading the agent. Update the reference or delete the rule."
+    },
+    {
+      "key": "427838fc5759",
+      "severity": "error",
+      "category": "stale-reference",
+      "message": "AGENTS.md:49-61 references `chatwidget.rs` which does not exist — actively misleading the agent. Update the reference or delete the rule."
+    },
+    {
+      "key": "8b5a085759d7",
+      "severity": "error",
+      "category": "stale-reference",
+      "message": "AGENTS.md:68-68 references `target/` which does not exist — actively misleading the agent. Update the reference or delete the rule."
+    },
+    {
+      "key": "4f6e7956d56c",
+      "severity": "warn",
+      "category": "budget",
+      "message": "8 critical rule(s) buried past 70% depth of an oversized file (AGENTS.md, deepest at line 319 = 99%) — likely lost in long sessions. Move critical rules to the front."
+    },
+    {
+      "key": "db6f4a66bd9e",
+      "severity": "warn",
+      "category": "budget",
+      "message": "AGENTS.md is ≈5183 estimated tokens (budget: 1500) — it is injected on every request for claude-code, cursor, copilot, codex, generic-agents-md. Trim it or split rarely-needed sections into on-demand docs."
+    },
+    {
+      "key": "3a7f86897bab",
+      "severity": "warn",
+      "category": "budget",
+      "message": "claude-code working in . loads ≈5183 estimated tokens of always-on context (budget: 4000) — that cost recurs on every request. Trim the files it loads: AGENTS.md (≈5183)."
+    },
+    {
+      "key": "2939ce1c25e7",
+      "severity": "warn",
+      "category": "budget",
+      "message": "claude-code working in codex-rs/tui/src/bottom_pane loads ≈5304 estimated tokens of always-on context (budget: 4000) — that cost recurs on every request. Trim the files it loads: AGENTS.md (≈5183), codex-rs/tui/src/bottom_pane/AGENTS.md (≈121)."
+    },
+    {
+      "key": "11ff96ce4edd",
+      "severity": "warn",
+      "category": "budget",
+      "message": "codex working in . loads ≈5183 estimated tokens of always-on context (budget: 4000) — that cost recurs on every request. Trim the files it loads: AGENTS.md (≈5183)."
+    },
+    {
+      "key": "e91d67c5c82f",
+      "severity": "warn",
+      "category": "budget",
+      "message": "codex working in codex-rs/tui/src/bottom_pane loads ≈5304 estimated tokens of always-on context (budget: 4000) — that cost recurs on every request. Trim the files it loads: AGENTS.md (≈5183), codex-rs/tui/src/bottom_pane/AGENTS.md (≈121)."
+    },
+    {
+      "key": "21af01ab45c1",
+      "severity": "warn",
+      "category": "budget",
+      "message": "copilot working in . loads ≈5183 estimated tokens of always-on context (budget: 4000) — that cost recurs on every request. Trim the files it loads: AGENTS.md (≈5183)."
+    },
+    {
+      "key": "2c68774fccbd",
+      "severity": "warn",
+      "category": "budget",
+      "message": "copilot working in codex-rs/tui/src/bottom_pane loads ≈5304 estimated tokens of always-on context (budget: 4000) — that cost recurs on every request. Trim the files it loads: AGENTS.md (≈5183), codex-rs/tui/src/bottom_pane/AGENTS.md (≈121)."
+    },
+    {
+      "key": "0220378e2ecf",
+      "severity": "warn",
+      "category": "budget",
+      "message": "cursor working in . loads ≈5183 estimated tokens of always-on context (budget: 4000) — that cost recurs on every request. Trim the files it loads: AGENTS.md (≈5183)."
+    },
+    {
+      "key": "ec3c9013d028",
+      "severity": "warn",
+      "category": "budget",
+      "message": "cursor working in codex-rs/tui/src/bottom_pane loads ≈5304 estimated tokens of always-on context (budget: 4000) — that cost recurs on every request. Trim the files it loads: AGENTS.md (≈5183), codex-rs/tui/src/bottom_pane/AGENTS.md (≈121)."
+    },
+    {
+      "key": "d3b0d630cc90",
+      "severity": "warn",
+      "category": "budget",
+      "message": "generic-agents-md working in . loads ≈5183 estimated tokens of always-on context (budget: 4000) — that cost recurs on every request. Trim the files it loads: AGENTS.md (≈5183)."
+    },
+    {
+      "key": "a161eb08bf54",
+      "severity": "warn",
+      "category": "budget",
+      "message": "generic-agents-md working in codex-rs/tui/src/bottom_pane loads ≈5304 estimated tokens of always-on context (budget: 4000) — that cost recurs on every request. Trim the files it loads: AGENTS.md (≈5183), codex-rs/tui/src/bottom_pane/AGENTS.md (≈121)."
+    },
+    {
+      "key": "77edd2886ad0",
+      "severity": "warn",
+      "category": "contradiction",
+      "message": "Contradictory instructions about the same thing: AGENTS.md:278-280 says one polarity, AGENTS.md:293-293 the opposite. An agent reading both will follow whichever it saw last — pick one. (Polarity heuristic is English-only.)"
+    },
+    {
+      "key": "9ef84e78f98f",
+      "severity": "warn",
+      "category": "contradiction",
+      "message": "Contradictory instructions about the same thing: AGENTS.md:291-291 says one polarity, AGENTS.md:292-292 the opposite. An agent reading both will follow whichever it saw last — pick one. (Polarity heuristic is English-only.)"
+    },
+    {
+      "key": "743aa7cfbb11",
+      "severity": "warn",
+      "category": "contradiction",
+      "message": "Contradictory instructions about the same thing: AGENTS.md:292-292 says one polarity, AGENTS.md:293-293 the opposite. An agent reading both will follow whichever it saw last — pick one. (Polarity heuristic is English-only.)"
+    }
+  ]
+}

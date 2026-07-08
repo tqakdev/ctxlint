@@ -16,6 +16,6 @@
     "noEmit": true,
     "types": ["node"]
   },
-  "include": ["src/**/*.ts", "test/**/*.ts", "vitest.config.ts"],
-  "exclude": ["test/fixtures", "node_modules", "dist"]
+  "include": ["src/**/*.ts", "test/**/*.ts", "bench/**/*.ts", "vitest.config.ts"],
+  "exclude": ["test/fixtures", "bench/.cache", "node_modules", "dist"]
 }

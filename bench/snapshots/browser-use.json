@@ -1,0 +1,126 @@
+{
+  "name": "browser-use",
+  "repo": "browser-use/browser-use",
+  "sha": "cf2c921d7df90c8b707f9008cc5e7f5a37c872a4",
+  "score": 64,
+  "stats": {
+    "surfaces": 2,
+    "rules": 305
+  },
+  "findings": [
+    {
+      "key": "2ed200cbb2b4",
+      "severity": "error",
+      "category": "duplication",
+      "message": "Same rule maintained twice for different tools: AGENTS.md:7-11 and CLAUDE.md:37-41 are 100% identical. Keep one canonical copy (prefer AGENTS.md) and delete the other."
+    },
+    {
+      "key": "d3838cf9092e",
+      "severity": "error",
+      "category": "stale-reference",
+      "message": "CLAUDE.md:119-119 references `docs/` which does not exist — actively misleading the agent. Update the reference or delete the rule."
+    },
+    {
+      "key": "6edc31349684",
+      "severity": "error",
+      "category": "stale-reference",
+      "message": "CLAUDE.md:128-128 references `service.py` which does not exist — actively misleading the agent. Update the reference or delete the rule."
+    },
+    {
+      "key": "030ce2987510",
+      "severity": "error",
+      "category": "stale-reference",
+      "message": "CLAUDE.md:129-129 references `views.py` which does not exist — actively misleading the agent. Update the reference or delete the rule."
+    },
+    {
+      "key": "273fda3e450c",
+      "severity": "error",
+      "category": "stale-reference",
+      "message": "CLAUDE.md:130-130 references `events.py` which does not exist — actively misleading the agent. Update the reference or delete the rule."
+    },
+    {
+      "key": "52231cf84d74",
+      "severity": "error",
+      "category": "stale-reference",
+      "message": "CLAUDE.md:132-132 references files matching `browser_use/agent/system_prompt*.md` which does not exist — actively misleading the agent. Update the reference or delete the rule."
+    },
+    {
+      "key": "ee50cb9de83a",
+      "severity": "error",
+      "category": "stale-reference",
+      "message": "CLAUDE.md:67-67 references `service.py` which does not exist — actively misleading the agent. Update the reference or delete the rule."
+    },
+    {
+      "key": "903955c70238",
+      "severity": "error",
+      "category": "stale-reference",
+      "message": "CLAUDE.md:67-67 references `views.py` which does not exist — actively misleading the agent. Update the reference or delete the rule."
+    },
+    {
+      "key": "6763c6220cea",
+      "severity": "error",
+      "category": "stale-reference",
+      "message": "CLAUDE.md:87-87 references `tests/ci/test_action_EventNameHere.py` which does not exist — actively misleading the agent. Update the reference or delete the rule."
+    },
+    {
+      "key": "5d2fbb13821d",
+      "severity": "error",
+      "category": "stale-reference",
+      "message": "CLAUDE.md:88-88 references `conftest.py` which does not exist — actively misleading the agent. Update the reference or delete the rule."
+    },
+    {
+      "key": "0af0561c7019",
+      "severity": "warn",
+      "category": "budget",
+      "message": "1 critical rule(s) buried past 70% depth of an oversized file (AGENTS.md, deepest at line 899 = 88%) — likely lost in long sessions. Move critical rules to the front."
+    },
+    {
+      "key": "bdf07c2aaa3d",
+      "severity": "warn",
+      "category": "budget",
+      "message": "4 critical rule(s) buried past 70% depth of an oversized file (CLAUDE.md, deepest at line 160 = 98%) — likely lost in long sessions. Move critical rules to the front."
+    },
+    {
+      "key": "0a879dbab91f",
+      "severity": "warn",
+      "category": "budget",
+      "message": "AGENTS.md is ≈9095 estimated tokens (budget: 1500) — it is injected on every request for claude-code, cursor, copilot, codex, generic-agents-md. Trim it or split rarely-needed sections into on-demand docs."
+    },
+    {
+      "key": "4d0ba541b706",
+      "severity": "warn",
+      "category": "budget",
+      "message": "claude-code working in . loads ≈11590 estimated tokens of always-on context (budget: 4000) — that cost recurs on every request. Trim the files it loads: CLAUDE.md (≈2495), AGENTS.md (≈9095)."
+    },
+    {
+      "key": "dfa1b35ac769",
+      "severity": "warn",
+      "category": "budget",
+      "message": "CLAUDE.md is ≈2495 estimated tokens (budget: 1500) — it is injected on every request for claude-code. Trim it or split rarely-needed sections into on-demand docs."
+    },
+    {
+      "key": "69a7023846df",
+      "severity": "warn",
+      "category": "budget",
+      "message": "codex working in . loads ≈9095 estimated tokens of always-on context (budget: 4000) — that cost recurs on every request. Trim the files it loads: AGENTS.md (≈9095)."
+    },
+    {
+      "key": "aa64586473a7",
+      "severity": "warn",
+      "category": "budget",
+      "message": "copilot working in . loads ≈9095 estimated tokens of always-on context (budget: 4000) — that cost recurs on every request. Trim the files it loads: AGENTS.md (≈9095)."
+    },
+    {
+      "key": "c2c4c0ef2af9",
+      "severity": "warn",
+      "category": "budget",
+      "message": "cursor working in . loads ≈9095 estimated tokens of always-on context (budget: 4000) — that cost recurs on every request. Trim the files it loads: AGENTS.md (≈9095)."
+    },
+    {
+      "key": "7dbb77e2ce0b",
+      "severity": "warn",
+      "category": "budget",
+      "message": "generic-agents-md working in . loads ≈9095 estimated tokens of always-on context (budget: 4000) — that cost recurs on every request. Trim the files it loads: AGENTS.md (≈9095)."
+    }
+  ]
+}

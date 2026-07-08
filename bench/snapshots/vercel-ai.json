@@ -1,0 +1,42 @@
+{
+  "name": "vercel-ai",
+  "repo": "vercel/ai",
+  "sha": "0363440e8b3592e8a59f3f74232841c9bfeabf0e",
+  "score": 82,
+  "stats": {
+    "surfaces": 2,
+    "rules": 93
+  },
+  "findings": [
+    {
+      "key": "bbcfcb324316",
+      "severity": "error",
+      "category": "stale-reference",
+      "message": "AGENTS.md:84-87 references `src/stream-text/openai/basic.ts` which does not exist — actively misleading the agent. Update the reference or delete the rule."
+    },
+    {
+      "key": "89dbab056444",
+      "severity": "error",
+      "category": "stale-reference",
+      "message": "AGENTS.md:92-92 references `basic.ts` which does not exist — actively misleading the agent. Update the reference or delete the rule."
+    },
+    {
+      "key": "5165335c128d",
+      "severity": "error",
+      "category": "stale-reference",
+      "message": "AGENTS.md:94-94 references `src/stream-text/openai.ts` which does not exist — actively misleading the agent. Update the reference or delete the rule."
+    },
+    {
+      "key": "fd934dc280c0",
+      "severity": "warn",
+      "category": "budget",
+      "message": "1 critical rule(s) buried past 70% depth of an oversized file (AGENTS.md, deepest at line 259 = 84%) — likely lost in long sessions. Move critical rules to the front."
+    },
+    {
+      "key": "1adbaf47aced",
+      "severity": "warn",
+      "category": "budget",
+      "message": "AGENTS.md is ≈2724 estimated tokens (budget: 1500) — it is injected on every request for claude-code, cursor, copilot, codex, generic-agents-md. Trim it or split rarely-needed sections into on-demand docs."
+    }
+  ]
+}
