@@ -9,40 +9,10 @@
   },
   "findings": [
     {
-      "key": "dba829937fc9",
-      "severity": "error",
-      "category": "stale-reference",
-      "message": "AGENTS.md:105-105 references `.pr/` which does not exist — actively misleading the agent. Update the reference or delete the rule."
-    },
-    {
-      "key": "5b81d3482570",
-      "severity": "error",
-      "category": "stale-reference",
-      "message": "AGENTS.md:106-106 references `.pr/` which does not exist — actively misleading the agent. Update the reference or delete the rule."
-    },
-    {
-      "key": "158a20e3f8b5",
-      "severity": "error",
-      "category": "stale-reference",
-      "message": "AGENTS.md:111-111 references `.pr/` which does not exist — actively misleading the agent. Update the reference or delete the rule."
-    },
-    {
       "key": "c147b38a87cc",
       "severity": "error",
       "category": "stale-reference",
       "message": "AGENTS.md:112-112 references `.pr/` which does not exist — actively misleading the agent. Update the reference or delete the rule."
-    },
-    {
-      "key": "5a1a10e6a2b0",
-      "severity": "error",
-      "category": "stale-reference",
-      "message": "AGENTS.md:113-113 references `.pr/` which does not exist — actively misleading the agent. Update the reference or delete the rule."
-    },
-    {
-      "key": "88c15fd189bf",
-      "severity": "error",
-      "category": "stale-reference",
-      "message": "AGENTS.md:143-145 references `frontend/.env` which does not exist — actively misleading the agent. Update the reference or delete the rule."
     },
     {
       "key": "3484247bdebd",
@@ -55,18 +25,6 @@
       "severity": "error",
       "category": "stale-reference",
       "message": "AGENTS.md:197-207 references `tests/unit/telemetry/` which does not exist — actively misleading the agent. Update the reference or delete the rule."
-    },
-    {
-      "key": "bb31c12f076d",
-      "severity": "error",
-      "category": "stale-reference",
-      "message": "AGENTS.md:251-251 references `conftest.py` which does not exist — actively misleading the agent. Update the reference or delete the rule."
-    },
-    {
-      "key": "f4db7085b54c",
-      "severity": "error",
-      "category": "stale-reference",
-      "message": "AGENTS.md:281-281 references `logs/` which does not exist — actively misleading the agent. Update the reference or delete the rule."
     },
     {
       "key": "4eb8b4355d5b",
@@ -85,18 +43,6 @@
       "severity": "error",
       "category": "stale-reference",
       "message": "AGENTS.md:349-349 references `frontend/src/state/chat-slice.ts` which does not exist — actively misleading the agent. Update the reference or delete the rule."
-    },
-    {
-      "key": "43375bb5a169",
-      "severity": "error",
-      "category": "stale-reference",
-      "message": "AGENTS.md:380-385 references `use-add-mcp-server.ts` which does not exist — actively misleading the agent. Update the reference or delete the rule."
-    },
-    {
-      "key": "6667fcb2f93f",
-      "severity": "error",
-      "category": "stale-reference",
-      "message": "AGENTS.md:380-385 references `use-delete-mcp-server.ts` which does not exist — actively misleading the agent. Update the reference or delete the rule."
     },
     {
       "key": "273683b49279",

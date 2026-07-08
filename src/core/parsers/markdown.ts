@@ -69,9 +69,17 @@ const EXCLUDED_FIRST_SEGMENTS = new Set([
   "coverage",
   "tmp",
   "temp",
+  "target",
+  "logs",
   ".git",
   ".ctxlint-cache",
 ]);
+
+/** Metasyntactic path segments ("foo/index.ts", "path/to/file"). */
+const PLACEHOLDER_FIRST_SEGMENTS = new Set(["foo", "bar", "baz"]);
+
+/** Placeholder markers inside a filename ("test_action_EventNameHere.py"). */
+const PLACEHOLDER_BASENAME = /NameHere|PLACEHOLDER|placeholder|YourName|XXX/;
 
 const EXCLUDED_FILES = new Set(["package-lock.json", "pnpm-lock.yaml", "yarn.lock"]);
 
@@ -80,12 +88,23 @@ const NAMING_CONVENTION =
   /^(?:kebab-case|camelCase|PascalCase|snake_case|SCREAMING_SNAKE_CASE)(?:\.[\w-]+)*$/;
 
 function isExcludedRef(ref: string): boolean {
-  if (/^\.env(?!\.(?:example|sample))/.test(ref)) return true;
+  if (/(?:^|\/)\.env(?!\.(?:example|sample))/.test(ref)) return true;
+  if (ref.includes("...")) return true; // ellipsis path: "webview-ui/.../X.ts"
   const first = ref.split("/")[0] as string;
   if (EXCLUDED_FIRST_SEGMENTS.has(first)) return true;
+  if (PLACEHOLDER_FIRST_SEGMENTS.has(first) || ref.startsWith("path/to/")) return true;
   const base = ref.slice(ref.lastIndexOf("/") + 1);
   if (EXCLUDED_FILES.has(base)) return true;
   if (NAMING_CONVENTION.test(base)) return true;
+  if (PLACEHOLDER_BASENAME.test(base)) return true;
+  if (!ref.includes("/")) {
+    // The whole token is a bare extension ("any `.proto` change").
+    if (ref.startsWith(".") && ref.lastIndexOf(".") === 0 && KNOWN_EXTENSIONS.test(ref)) {
+      return true;
+    }
+    // Capitalized "extension" is a code identifier ("Schema.Json"), not a file.
+    if (/\.[A-Z][a-zA-Z]*$/.test(ref) && KNOWN_EXTENSIONS.test(ref)) return true;
+  }
   return false;
 }
 
@@ -120,6 +139,51 @@ const BARE_PATH = /(?:^|[\s,;(])((?:\.\/)?[\w@.-]+\/[\w@./*-]+)/g;
 const NEGATED_EXISTENCE =
   /\b(?:no longer exists?|does not exist|doesn'?t exist|was (?:removed|deleted|moved)|is gone|were removed)\b/i;
 
+const NEGATION_WORD = /\b(?:do not|don'?t|never|avoid)\b/i;
+const NEGATED_VERB =
+  /\b(?:re)?(?:creat|add|us(?:e|ing)|put|stor|import|commit|introduc|touch|generat)/i;
+const CREATION_VERB =
+  /\b(?:creat(?:e|es|ing)|writ(?:e|es|ing)|generat(?:e|es|ing)|recreat(?:e|es|ing))\b/i;
+const LOCATION_PREP = /\b(?:in|into|under|inside|within|at|to|from)\b/i;
+const REMOVAL_NEARBY = /\bremov(?:e[ds]?|ing|al)\b|\bdeleted?\b/i;
+
+/**
+ * A reference is not an existence claim when its sentence talks about
+ * creating it ("Create module-specific conftest.py files"), prohibits it
+ * ("do not create files like X", "never use feat/ prefixes"), removes it
+ * ("must manually remove .pr/"), or conditions on it ("when .pr/ exists").
+ * "Create the definition in src/tools/" keeps src/tools/ — the preposition
+ * marks it as a location, and locations must exist.
+ */
+function inNonExistenceContext(text: string, start: number, end: number): boolean {
+  const boundary = /[.;!?]/;
+  let sentenceStart = 0;
+  for (let i = start - 1; i >= 0; i--) {
+    if (boundary.test(text[i] as string)) {
+      sentenceStart = i + 1;
+      break;
+    }
+  }
+  const prefix = text.slice(sentenceStart, start);
+  const stop = text.slice(end, end + 80).search(boundary);
+  const suffix = text.slice(end, stop === -1 ? end + 80 : end + stop);
+
+  const negation = NEGATION_WORD.exec(prefix);
+  if (negation && NEGATED_VERB.test(prefix.slice(negation.index))) return true;
+  const creation = CREATION_VERB.exec(prefix);
+  if (creation && !LOCATION_PREP.test(prefix.slice(creation.index + creation[0].length))) {
+    return true;
+  }
+  if (
+    /\b(?:when|if)\b/i.test(prefix) &&
+    /^\s*(?:directory\s+|folder\s+|file\s+)?exists?\b/i.test(suffix)
+  ) {
+    return true;
+  }
+  if (REMOVAL_NEARBY.test(prefix) || REMOVAL_NEARBY.test(suffix)) return true;
+  return false;
+}
+
 export function extractReferences(text: string, codeSpans: string[]): string[] {
   if (NEGATED_EXISTENCE.test(text)) return [];
   const refs = new Set<string>();
@@ -130,13 +194,19 @@ export function extractReferences(text: string, codeSpans: string[]): string[] {
       continue;
     }
     const trimmed = span.replace(/[.,;:]+$/, "");
-    if (looksLikePath(trimmed) && !isExcludedRef(trimmed)) refs.add(trimmed);
+    if (!looksLikePath(trimmed) || isExcludedRef(trimmed)) continue;
+    const at = text.indexOf(`\`${span}\``);
+    if (at !== -1 && inNonExistenceContext(text, at, at + span.length + 2)) continue;
+    refs.add(trimmed);
   }
   // Bare tokens outside code spans (e.g. plain-text files like .cursorrules).
-  const withoutCode = text.replace(/`[^`]*`/g, " ");
+  const withoutCode = text.replace(/`[^`]*`/g, (span) => " ".repeat(span.length));
   for (const match of withoutCode.matchAll(BARE_PATH)) {
     const token = (match[1] as string).replace(/[.,;:]+$/, "");
-    if (looksLikePath(token) && !isExcludedRef(token)) refs.add(token);
+    if (!looksLikePath(token) || isExcludedRef(token)) continue;
+    const at = match.index + match[0].indexOf(match[1] as string);
+    if (inNonExistenceContext(text, at, at + token.length)) continue;
+    refs.add(token);
   }
   return [...refs].sort();
 }

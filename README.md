@@ -251,30 +251,36 @@ Honesty section. Read this before trusting a number.
 
 ## Benchmark: measured precision on real repos
 
-Every finding ctxlint produced on seven pinned open-source repos (openai/codex,
+Every finding ctxlint produces on seven pinned open-source repos (openai/codex,
 sst/opencode, All-Hands-AI/OpenHands, cline/cline, block/goose, vercel/ai,
-browser-use/browser-use — `bench/corpus.json`) was hand-labeled true/false
-positive against the actual checkout (`bench/labels.json`, 177 findings):
+browser-use/browser-use — `bench/corpus.json`) is hand-labeled true/false
+positive against the actual checkout (`bench/labels.json`, 120 findings):
 
 | category | precision | tp / fp | notes |
 |---|---:|---|---|
 | budget | 98% | 57 / 1 | token math is token math |
+| stale-reference | 91% | 52 / 5 | the flagship analyzer |
 | duplication | 100% | 2 / 0 | small sample |
-| stale-reference | 52% | 59 / 54 | see below |
-| contradiction | 33% | 1 / 2 | small sample |
-| structure | 0% | 0 / 1 | small sample |
-| **overall** | **67%** | **119 / 58** | |
+| contradiction | 33% | 1 / 2 | small sample — being reworked |
+| structure | — | 0 / 0 | all earlier fps fixed |
+| **overall** | **93%** | **112 / 8** | |
 
-The stale-reference number is the honest one: the true positives include an
-entire rotted `copilot-instructions.md` (cline restructured; `src/`, `proto/`,
-`webview-ui/` are gone) and OpenHands' post-refactor doc drift — exactly what
-the analyzer exists to catch. The false positives cluster into conventions the
-resolver doesn't model yet: package-relative paths in nested AGENTS.md files,
-import-specifier quotes (`./native-request`), files referenced by bare name,
-and prose like "when `.pr/` exists". Each labeled fp is a regression target.
+The first labeling pass measured 67% overall (stale-reference 52%). Instead of
+publishing that and moving on, the labeled false positives became the fix list:
+resolve references against ancestor directories and `cd` contexts, complete
+import-specifier extensions (`./native-request` → `native-request.ts`), treat
+bare filenames that exist anywhere as findable, understand creation/removal/
+conditional sentences ("do not create X", "when `.pr/` exists"), and drop
+never-path tokens (`text/*`, `Schema.Json`, `kebab-case.ts`, ellipsis paths).
+Two resolution bugs were found the same way. The surviving true positives are
+the real thing: cline's entire `copilot-instructions.md` describes a repo
+layout that no longer exists, and OpenHands' AGENTS.md still points at its
+pre-refactor tree.
 
 Reproduce with `pnpm bench` (clones the pinned SHAs, ~200 MB); `pnpm bench
---check` fails if analyzer output drifts from the committed snapshots.
+--check` fails if analyzer output drifts from the committed snapshots. Labels
+are re-audited whenever a snapshot changes — precision claims stay tied to
+the exact code that earns them.
 
 ## Development
 

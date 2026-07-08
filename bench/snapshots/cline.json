@@ -9,12 +9,6 @@
   },
   "findings": [
     {
-      "key": "9a75f746e169",
-      "severity": "error",
-      "category": "stale-reference",
-      "message": ".github/copilot-instructions.md:14-14 references `.proto` which does not exist — actively misleading the agent. Update the reference or delete the rule."
-    },
-    {
       "key": "bd3f2a0ba877",
       "severity": "error",
       "category": "stale-reference",
@@ -25,12 +19,6 @@
       "severity": "error",
       "category": "stale-reference",
       "message": ".github/copilot-instructions.md:14-14 references `src/shared/proto/` which does not exist — actively misleading the agent. Update the reference or delete the rule."
-    },
-    {
-      "key": "629004c8ec10",
-      "severity": "error",
-      "category": "stale-reference",
-      "message": ".github/copilot-instructions.md:18-18 references `common.proto` which does not exist — actively misleading the agent. Update the reference or delete the rule."
     },
     {
       "key": "8022fec60139",
@@ -69,24 +57,6 @@
       "message": ".github/copilot-instructions.md:30-30 references `src/shared/providers/providers.json` which does not exist — actively misleading the agent. Update the reference or delete the rule."
     },
     {
-      "key": "380f4f6e6d03",
-      "severity": "error",
-      "category": "stale-reference",
-      "message": ".github/copilot-instructions.md:30-30 references `webview-ui/.../ApiOptions.tsx` which does not exist — actively misleading the agent. Update the reference or delete the rule."
-    },
-    {
-      "key": "ae1c2e663684",
-      "severity": "error",
-      "category": "stale-reference",
-      "message": ".github/copilot-instructions.md:30-30 references `webview-ui/.../providerUtils.ts` which does not exist — actively misleading the agent. Update the reference or delete the rule."
-    },
-    {
-      "key": "ddecf630ae30",
-      "severity": "error",
-      "category": "stale-reference",
-      "message": ".github/copilot-instructions.md:30-30 references `webview-ui/.../validate.ts` which does not exist — actively misleading the agent. Update the reference or delete the rule."
-    },
-    {
       "key": "093fd0c1a79a",
       "severity": "error",
       "category": "stale-reference",
@@ -123,34 +93,10 @@
       "message": ".github/copilot-instructions.md:39-39 references `ToolExecutor.ts` which does not exist — actively misleading the agent. Update the reference or delete the rule."
     },
     {
-      "key": "c1100cfa1b94",
-      "severity": "error",
-      "category": "stale-reference",
-      "message": ".github/copilot-instructions.md:40-40 references `ChatRow.tsx` which does not exist — actively misleading the agent. Update the reference or delete the rule."
-    },
-    {
-      "key": "684b5df840bc",
-      "severity": "error",
-      "category": "stale-reference",
-      "message": ".github/copilot-instructions.md:40-40 references `cline-message.ts` which does not exist — actively misleading the agent. Update the reference or delete the rule."
-    },
-    {
-      "key": "9dddf1376911",
-      "severity": "error",
-      "category": "stale-reference",
-      "message": ".github/copilot-instructions.md:40-40 references `ExtensionMessage.ts` which does not exist — actively misleading the agent. Update the reference or delete the rule."
-    },
-    {
       "key": "caaf2a877b12",
       "severity": "error",
       "category": "stale-reference",
       "message": ".github/copilot-instructions.md:44-44 references `components/` which does not exist — actively misleading the agent. Update the reference or delete the rule."
-    },
-    {
-      "key": "c99082ef5f95",
-      "severity": "error",
-      "category": "stale-reference",
-      "message": ".github/copilot-instructions.md:44-44 references `config.ts` which does not exist — actively misleading the agent. Update the reference or delete the rule."
     },
     {
       "key": "f969c474a1b2",
@@ -201,22 +147,10 @@
       "message": ".github/copilot-instructions.md:56-56 references `src/shared/services/Logger.ts` which does not exist — actively misleading the agent. Update the reference or delete the rule."
     },
     {
-      "key": "0bf91fabb5a7",
-      "severity": "error",
-      "category": "stale-reference",
-      "message": ".github/copilot-instructions.md:6-6 references `extension.ts` which does not exist — actively misleading the agent. Update the reference or delete the rule."
-    },
-    {
       "key": "deaa7834cd27",
       "severity": "error",
       "category": "stale-reference",
       "message": ".github/copilot-instructions.md:6-6 references `src/` which does not exist — actively misleading the agent. Update the reference or delete the rule."
-    },
-    {
-      "key": "4d05de2d7346",
-      "severity": "error",
-      "category": "stale-reference",
-      "message": ".github/copilot-instructions.md:7-7 references `ExtensionStateContext.tsx` which does not exist — actively misleading the agent. Update the reference or delete the rule."
     },
     {
       "key": "9c8fec02bf1e",

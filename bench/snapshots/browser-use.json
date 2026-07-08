@@ -2,7 +2,7 @@
   "name": "browser-use",
   "repo": "browser-use/browser-use",
   "sha": "cf2c921d7df90c8b707f9008cc5e7f5a37c872a4",
-  "score": 64,
+  "score": 77,
   "stats": {
     "surfaces": 2,
     "rules": 305
@@ -21,52 +21,10 @@
       "message": "CLAUDE.md:119-119 references `docs/` which does not exist — actively misleading the agent. Update the reference or delete the rule."
     },
     {
-      "key": "6edc31349684",
-      "severity": "error",
-      "category": "stale-reference",
-      "message": "CLAUDE.md:128-128 references `service.py` which does not exist — actively misleading the agent. Update the reference or delete the rule."
-    },
-    {
-      "key": "030ce2987510",
-      "severity": "error",
-      "category": "stale-reference",
-      "message": "CLAUDE.md:129-129 references `views.py` which does not exist — actively misleading the agent. Update the reference or delete the rule."
-    },
-    {
-      "key": "273fda3e450c",
-      "severity": "error",
-      "category": "stale-reference",
-      "message": "CLAUDE.md:130-130 references `events.py` which does not exist — actively misleading the agent. Update the reference or delete the rule."
-    },
-    {
       "key": "52231cf84d74",
       "severity": "error",
       "category": "stale-reference",
       "message": "CLAUDE.md:132-132 references files matching `browser_use/agent/system_prompt*.md` which does not exist — actively misleading the agent. Update the reference or delete the rule."
-    },
-    {
-      "key": "ee50cb9de83a",
-      "severity": "error",
-      "category": "stale-reference",
-      "message": "CLAUDE.md:67-67 references `service.py` which does not exist — actively misleading the agent. Update the reference or delete the rule."
-    },
-    {
-      "key": "903955c70238",
-      "severity": "error",
-      "category": "stale-reference",
-      "message": "CLAUDE.md:67-67 references `views.py` which does not exist — actively misleading the agent. Update the reference or delete the rule."
-    },
-    {
-      "key": "6763c6220cea",
-      "severity": "error",
-      "category": "stale-reference",
-      "message": "CLAUDE.md:87-87 references `tests/ci/test_action_EventNameHere.py` which does not exist — actively misleading the agent. Update the reference or delete the rule."
-    },
-    {
-      "key": "5d2fbb13821d",
-      "severity": "error",
-      "category": "stale-reference",
-      "message": "CLAUDE.md:88-88 references `conftest.py` which does not exist — actively misleading the agent. Update the reference or delete the rule."
     },
     {
       "key": "0af0561c7019",

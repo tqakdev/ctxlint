@@ -37,28 +37,69 @@ function normalizeSegments(p: string): string | null {
   return out.join("/");
 }
 
-function pathExists(ref: string, dir: string, facts: RepoFacts): boolean {
+/**
+ * Resolution bases for a surface's references, most specific first: the
+ * surface's own directory, every ancestor up to the repo root (nested
+ * AGENTS.md files routinely write paths relative to their package root),
+ * and any `cd <dir>` named in the rule itself (command blocks resolve
+ * subsequent paths relative to that directory).
+ */
+function basesFor(dir: string, ruleText: string): string[] {
+  const bases = [dir];
+  let current = dir;
+  while (current !== ".") {
+    const idx = current.lastIndexOf("/");
+    current = idx === -1 ? "." : current.slice(0, idx);
+    bases.push(current);
+  }
+  for (const match of ruleText.matchAll(/\bcd\s+([\w@./-]+)/g)) {
+    bases.push((match[1] as string).replace(/\/$/, ""));
+  }
+  return [...new Set(bases)];
+}
+
+/** Extensions tried for import-specifier-style refs ("./native-request"). */
+const COMPLETION_EXTENSIONS = [
+  ".ts",
+  ".tsx",
+  ".js",
+  ".jsx",
+  ".mjs",
+  ".cjs",
+  ".py",
+  ".rs",
+  ".go",
+  ".md",
+];
+
+function pathExists(ref: string, bases: string[], facts: RepoFacts): boolean {
   // "sdk" + "./X" must become "sdk/X" and "a/b" + "../X" must become "a/X",
   // else ./- and ../-prefixed references from subdirectory surfaces can never
   // resolve (found on the cline and opencode benchmark repos).
-  const raws = dir === "." ? [ref] : [join(dir, ref), ref];
+  const completable = !HAS_EXTENSION.test(ref) && !ref.endsWith("/");
   let judgeable = false;
-  for (const raw of raws) {
+  for (const base of bases) {
+    const raw = base === "." ? ref : join(base, ref);
     const candidate = normalizeSegments(raw.replace(/\/$/, ""));
     if (candidate === null) continue; // escapes the repo from this base
     judgeable = true;
     if (candidate === "" || facts.fileSet.has(candidate) || facts.dirSet.has(candidate)) {
       return true;
     }
+    if (completable) {
+      for (const ext of COMPLETION_EXTENSIONS) {
+        if (facts.fileSet.has(candidate + ext)) return true;
+      }
+    }
   }
   // Escapes the repo from every base — unjudgeable, so never flag it.
   return !judgeable;
 }
 
-function globExists(ref: string, dir: string, facts: RepoFacts): boolean {
-  if (globMatchesAny(ref, facts.files)) return true;
-  if (dir !== "." && ref.includes("/")) {
-    return globMatchesAny(join(dir, ref), facts.files);
+function globExists(ref: string, bases: string[], facts: RepoFacts): boolean {
+  for (const base of bases) {
+    const pattern = base === "." ? ref : join(base, ref);
+    if (globMatchesAny(pattern, facts.files)) return true;
   }
   return false;
 }
@@ -98,10 +139,24 @@ export function analyzeStaleness(
   facts: RepoFacts,
 ): Finding[] {
   const findings: Finding[] = [];
+  // A slash-less filename that exists anywhere in the repo is findable by
+  // name — "each component has a service.py" is a convention, not a location.
+  let basenames: Set<string> | null = null;
+  const basenameExists = (name: string): boolean => {
+    basenames ??= new Set(facts.files.map((f) => f.slice(f.lastIndexOf("/") + 1)));
+    return basenames.has(name);
+  };
   for (const rule of rules) {
     const surface = surfaces.get(rule.surfaceId);
     if (!surface || surface.scope === "user-global") continue;
     const dir = surfaceDir(surface.path);
+    const bases = basesFor(dir, rule.text);
+    // Docs in package roots conventionally omit the src/ prefix
+    // ("protocols/utils/tool-stream.ts" for packages/llm/src/protocols/…).
+    for (const base of [...bases]) {
+      const srcDir = base === "." ? "src" : `${base}/src`;
+      if (facts.dirSet.has(srcDir)) bases.push(srcDir);
+    }
     for (const ref of rule.referencedPaths) {
       const weak =
         !ref.startsWith("npm run ") &&
@@ -125,10 +180,10 @@ export function analyzeStaleness(
         // (`*.orig`) are pattern mentions, not location claims: only judge
         // globs anchored in a directory that exists in this repo.
         if (!ref.includes("/") || !isCredibleWeakRef(ref, dir, facts)) continue;
-        exists = globExists(ref, dir, facts);
+        exists = globExists(ref, bases, facts);
         what = `files matching \`${ref}\``;
       } else {
-        exists = pathExists(ref, dir, facts);
+        exists = pathExists(ref, bases, facts) || (!ref.includes("/") && basenameExists(ref));
         what = `\`${ref}\``;
       }
       if (exists) continue;

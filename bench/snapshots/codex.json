@@ -39,12 +39,6 @@
       "message": "AGENTS.md:276-276 references `app-server-protocol/src/protocol/v2.rs` which does not exist — actively misleading the agent. Update the reference or delete the rule."
     },
     {
-      "key": "a5d992b39637",
-      "severity": "error",
-      "category": "stale-reference",
-      "message": "AGENTS.md:286-287 references `common.rs` which does not exist — actively misleading the agent. Update the reference or delete the rule."
-    },
-    {
       "key": "14df29bd6266",
       "severity": "error",
       "category": "stale-reference",
@@ -57,40 +51,10 @@
       "message": "AGENTS.md:300-300 references `docs/examples` which does not exist — actively misleading the agent. Update the reference or delete the rule."
     },
     {
-      "key": "4762eeb98fcc",
-      "severity": "error",
-      "category": "stale-reference",
-      "message": "AGENTS.md:305-306 references `common.rs` which does not exist — actively misleading the agent. Update the reference or delete the rule."
-    },
-    {
-      "key": "2c6c429ba04a",
-      "severity": "error",
-      "category": "stale-reference",
-      "message": "AGENTS.md:314-315 references `pyproject.toml` which does not exist — actively misleading the agent. Update the reference or delete the rule."
-    },
-    {
       "key": "a946c073ba2e",
       "severity": "error",
       "category": "stale-reference",
       "message": "AGENTS.md:35-35 references `codex-rs/codex-mcp/src/mcp_connection_manager.rs` which does not exist — actively misleading the agent. Update the reference or delete the rule."
-    },
-    {
-      "key": "9c17575aad63",
-      "severity": "error",
-      "category": "stale-reference",
-      "message": "AGENTS.md:37-39 references `Cargo.toml` which does not exist — actively misleading the agent. Update the reference or delete the rule."
-    },
-    {
-      "key": "427838fc5759",
-      "severity": "error",
-      "category": "stale-reference",
-      "message": "AGENTS.md:49-61 references `chatwidget.rs` which does not exist — actively misleading the agent. Update the reference or delete the rule."
-    },
-    {
-      "key": "8b5a085759d7",
-      "severity": "error",
-      "category": "stale-reference",
-      "message": "AGENTS.md:68-68 references `target/` which does not exist — actively misleading the agent. Update the reference or delete the rule."
     },
     {
       "key": "4f6e7956d56c",

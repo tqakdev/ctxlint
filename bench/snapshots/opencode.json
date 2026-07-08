@@ -2,120 +2,12 @@
   "name": "opencode",
   "repo": "sst/opencode",
   "sha": "77429f59823c8c6df9cfee95d4c663043b017f46",
-  "score": 65,
+  "score": 91,
   "stats": {
     "surfaces": 15,
     "rules": 412
   },
   "findings": [
-    {
-      "key": "245f2e90a7d6",
-      "severity": "error",
-      "category": "stale-reference",
-      "message": "AGENTS.md:9-9 references `feat/` which does not exist — actively misleading the agent. Update the reference or delete the rule."
-    },
-    {
-      "key": "8d40800d6539",
-      "severity": "error",
-      "category": "stale-reference",
-      "message": "AGENTS.md:9-9 references `fix/` which does not exist — actively misleading the agent. Update the reference or delete the rule."
-    },
-    {
-      "key": "b63dd52c5445",
-      "severity": "error",
-      "category": "stale-reference",
-      "message": "packages/llm/AGENTS.md:279-279 references `protocols/utils/tool-stream.ts` which does not exist — actively misleading the agent. Update the reference or delete the rule."
-    },
-    {
-      "key": "e5586e562d8f",
-      "severity": "error",
-      "category": "stale-reference",
-      "message": "packages/llm/AGENTS.md:286-286 references `openai-chat.ts` which does not exist — actively misleading the agent. Update the reference or delete the rule."
-    },
-    {
-      "key": "59a81ad70e93",
-      "severity": "error",
-      "category": "stale-reference",
-      "message": "packages/llm/AGENTS.md:87-87 references `route/auth-options.ts` which does not exist — actively misleading the agent. Update the reference or delete the rule."
-    },
-    {
-      "key": "ad89abfdaac7",
-      "severity": "error",
-      "category": "stale-reference",
-      "message": "packages/opencode/AGENTS.md:48-49 references `foo/index.ts` which does not exist — actively misleading the agent. Update the reference or delete the rule."
-    },
-    {
-      "key": "2097e372889e",
-      "severity": "error",
-      "category": "stale-reference",
-      "message": "packages/opencode/AGENTS.md:60-62 references `index.ts` which does not exist — actively misleading the agent. Update the reference or delete the rule."
-    },
-    {
-      "key": "29c5578de51d",
-      "severity": "error",
-      "category": "stale-reference",
-      "message": "packages/opencode/src/session/llm/AGENTS.md:26-26 references `./llm/ai-sdk` which does not exist — actively misleading the agent. Update the reference or delete the rule."
-    },
-    {
-      "key": "30498d634fcf",
-      "severity": "error",
-      "category": "stale-reference",
-      "message": "packages/opencode/src/session/llm/AGENTS.md:27-27 references `./llm/native-runtime` which does not exist — actively misleading the agent. Update the reference or delete the rule."
-    },
-    {
-      "key": "11f439834007",
-      "severity": "error",
-      "category": "stale-reference",
-      "message": "packages/opencode/src/session/llm/AGENTS.md:28-28 references `./native-request` which does not exist — actively misleading the agent. Update the reference or delete the rule."
-    },
-    {
-      "key": "b3e748d66e40",
-      "severity": "error",
-      "category": "stale-reference",
-      "message": "packages/opencode/src/session/llm/AGENTS.md:83-83 references `llm.ts` which does not exist — actively misleading the agent. Update the reference or delete the rule."
-    },
-    {
-      "key": "427e1831dcd2",
-      "severity": "error",
-      "category": "stale-reference",
-      "message": "packages/opencode/test/AGENTS.md:171-171 references `test/lib/effect.ts` which does not exist — actively misleading the agent. Update the reference or delete the rule."
-    },
-    {
-      "key": "ec45420cda12",
-      "severity": "error",
-      "category": "stale-reference",
-      "message": "packages/opencode/test/AGENTS.md:172-172 references `test/lib/effect.ts` which does not exist — actively misleading the agent. Update the reference or delete the rule."
-    },
-    {
-      "key": "c00ca5dac5a6",
-      "severity": "error",
-      "category": "stale-reference",
-      "message": "packages/opencode/test/AGENTS.md:173-173 references `test/lib/llm-server.ts` which does not exist — actively misleading the agent. Update the reference or delete the rule."
-    },
-    {
-      "key": "28523af0d8ed",
-      "severity": "error",
-      "category": "stale-reference",
-      "message": "packages/opencode/test/AGENTS.md:175-175 references `src/background/job.ts` which does not exist — actively misleading the agent. Update the reference or delete the rule."
-    },
-    {
-      "key": "bc0155c1949f",
-      "severity": "error",
-      "category": "stale-reference",
-      "message": "packages/opencode/test/AGENTS.md:22-22 references `opencode.json` which does not exist — actively misleading the agent. Update the reference or delete the rule."
-    },
-    {
-      "key": "bdc85a3caebe",
-      "severity": "error",
-      "category": "stale-reference",
-      "message": "packages/opencode/test/AGENTS.md:85-85 references `test/lib/effect.ts` which does not exist — actively misleading the agent. Update the reference or delete the rule."
-    },
-    {
-      "key": "262287e0cd36",
-      "severity": "error",
-      "category": "stale-reference",
-      "message": "packages/schema/AGENTS.md:72-72 references `Schema.Json` which does not exist — actively misleading the agent. Update the reference or delete the rule."
-    },
     {
       "key": "1589db5cbdd3",
       "severity": "warn",
@@ -271,12 +163,6 @@
       "severity": "warn",
       "category": "duplication",
       "message": "Duplicate rule: AGENTS.md:32-32 and packages/opencode/AGENTS.md:89-89 are 100% identical. Delete one copy."
-    },
-    {
-      "key": "bc6a6d6c82e6",
-      "severity": "info",
-      "category": "structure",
-      "message": "packages/stats/AGENTS.md is empty or boilerplate (72 chars of content) — it costs a file read on every session and tells the agent nothing. Fill it in or delete it."
     }
   ]
 }

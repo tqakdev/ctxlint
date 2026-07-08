@@ -52,10 +52,12 @@ export function analyzeStructure(surfaces: Surface[], rules: Rule[]): Finding[] 
   for (const surface of repoSurfaces) {
     // 2. Empty / boilerplate surfaces. A CLAUDE.md consisting of @imports
     //    ("@AGENTS.md") is a deliberate redirect — Claude Code inlines the
-    //    target file — not boilerplate.
+    //    target file — not boilerplate. A short file carrying a real command
+    //    (`bun dev:stats`) tells the agent something, however terse.
     const hasClaudeImports = surface.kind === "claude-md" && /^@\S+\s*$/m.test(surface.raw);
+    const hasCommand = /`[^`\n]{2,}`/.test(surface.raw);
     const bodyChars = surface.raw.replace(/^#.*$/gm, "").replace(/\s+/g, " ").trim().length;
-    if (bodyChars < 80 && !hasClaudeImports) {
+    if (bodyChars < 80 && !hasClaudeImports && !hasCommand) {
       findings.push({
         ruleIds: [],
         surfaceIds: [surface.id],

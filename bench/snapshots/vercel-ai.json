@@ -2,30 +2,12 @@
   "name": "vercel-ai",
   "repo": "vercel/ai",
   "sha": "0363440e8b3592e8a59f3f74232841c9bfeabf0e",
-  "score": 82,
+  "score": 97,
   "stats": {
     "surfaces": 2,
     "rules": 93
   },
   "findings": [
-    {
-      "key": "bbcfcb324316",
-      "severity": "error",
-      "category": "stale-reference",
-      "message": "AGENTS.md:84-87 references `src/stream-text/openai/basic.ts` which does not exist — actively misleading the agent. Update the reference or delete the rule."
-    },
-    {
-      "key": "89dbab056444",
-      "severity": "error",
-      "category": "stale-reference",
-      "message": "AGENTS.md:92-92 references `basic.ts` which does not exist — actively misleading the agent. Update the reference or delete the rule."
-    },
-    {
-      "key": "5165335c128d",
-      "severity": "error",
-      "category": "stale-reference",
-      "message": "AGENTS.md:94-94 references `src/stream-text/openai.ts` which does not exist — actively misleading the agent. Update the reference or delete the rule."
-    },
     {
       "key": "fd934dc280c0",
       "severity": "warn",
