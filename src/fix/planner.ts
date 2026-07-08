@@ -67,6 +67,7 @@ export function planFixes(result: ScanResult, renames: Map<string, string[]>): F
   const surfacesById = new Map(result.surfaces.map((s) => [s.id, s]));
   const fixes: PlannedFix[] = [];
   const plannedDeletes = new Set<string>();
+  const plannedUpdates = new Set<string>();
 
   const lookup = (ruleId: string) => {
     const rule = rulesById.get(ruleId);
@@ -118,35 +119,41 @@ export function planFixes(result: ScanResult, renames: Map<string, string[]>): F
       case "stale-reference": {
         const target = finding.ruleIds[0] ? lookup(finding.ruleIds[0]) : undefined;
         if (!target) break;
-        let planned = false;
-        for (const ref of target.rule.referencedPaths) {
-          const candidates = renames.get(ref.replace(/\/$/, ""));
-          if (candidates && candidates.length === 1) {
-            const newPath = candidates[0] as string;
-            fixes.push({
-              kind: "update-path",
-              safe: true,
-              description: `git history shows \`${ref}\` was renamed to \`${newPath}\` — update the reference in ${target.surface.path}:${target.rule.span.startLine}.`,
-              findingMessage: finding.message,
-              evidence: finding.evidence,
-              edits: [
-                {
-                  file: target.surface.path,
-                  type: "replace",
-                  span: target.rule.span,
-                  find: ref.replace(/\/$/, ""),
-                  replaceWith: newPath,
-                },
-              ],
-            });
-            planned = true;
-          }
-        }
-        if (!planned) {
+        // Only the reference this finding is about may be rewritten — the
+        // rule's other paths are live and touching them corrupts the file.
+        const staleRef = finding.fix?.ref?.replace(/\/$/, "");
+        const candidates = staleRef !== undefined ? renames.get(staleRef) : undefined;
+        const newPath = candidates?.length === 1 ? (candidates[0] as string) : undefined;
+        // `git log --all` sees abandoned branches, so a unique rename target
+        // may itself be gone — never write a path that does not exist today.
+        const targetExists =
+          newPath !== undefined &&
+          (result.index.fileSet.has(newPath) || result.index.dirSet.has(newPath));
+        if (staleRef !== undefined && newPath !== undefined && targetExists) {
+          const key = `${target.surface.path}:${target.rule.span.startLine}:${staleRef}->${newPath}`;
+          if (plannedUpdates.has(key)) break;
+          plannedUpdates.add(key);
+          fixes.push({
+            kind: "update-path",
+            safe: true,
+            description: `git history shows \`${staleRef}\` was renamed to \`${newPath}\` — update the reference in ${target.surface.path}:${target.rule.span.startLine}.`,
+            findingMessage: finding.message,
+            evidence: finding.evidence,
+            edits: [
+              {
+                file: target.surface.path,
+                type: "replace",
+                span: target.rule.span,
+                find: staleRef,
+                replaceWith: newPath,
+              },
+            ],
+          });
+        } else {
           suggest(
             finding,
             "update-path",
-            "No unique rename target in git history — fix the path by hand or delete the rule.",
+            "No unique surviving rename target in git history — fix the path by hand or delete the rule.",
           );
         }
         break;

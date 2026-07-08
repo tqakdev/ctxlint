@@ -126,6 +126,11 @@ export type FixKind =
 export interface FixSuggestion {
   kind: FixKind;
   description: string;
+  /**
+   * For update-path: the exact referenced path/script this finding is about,
+   * so the planner never rewrites the rule's OTHER references.
+   */
+  ref?: string;
   /** Unified diff when safely automatable. */
   patch?: string;
 }

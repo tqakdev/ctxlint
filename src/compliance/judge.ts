@@ -13,10 +13,16 @@ export interface JudgeClient {
 }
 
 export function anthropicJudgeClient(): JudgeClient {
+  // One SDK client per judge run, not one per request.
+  let clientPromise:
+    | Promise<InstanceType<typeof import("@anthropic-ai/sdk")["default"]>>
+    | undefined;
   return {
     async complete({ model, prompt, maxTokens }) {
-      const { default: Anthropic } = await import("@anthropic-ai/sdk");
-      const client = new Anthropic();
+      clientPromise ??= import("@anthropic-ai/sdk").then(
+        ({ default: Anthropic }) => new Anthropic(),
+      );
+      const client = await clientPromise;
       const response = await client.messages.create({
         model,
         max_tokens: maxTokens,

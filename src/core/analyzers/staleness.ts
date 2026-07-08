@@ -199,6 +199,7 @@ export function analyzeStaleness(
         evidence: `"${rule.text.length > 160 ? `${rule.text.slice(0, 157)}…` : rule.text}"`,
         fix: {
           kind: "update-path",
+          ref,
           description: `Point the reference at the current location of ${what}, or delete it if the thing is gone for good.`,
         },
       });

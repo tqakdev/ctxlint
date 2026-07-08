@@ -1,20 +1,20 @@
 import type { RepoIndex } from "../discovery.js";
-import { globToRegExp } from "../glob.js";
 import type { EffectiveContext, EffectiveContextEntry, Surface } from "../model.js";
 import type { CursorRuleMeta } from "../parsers/cursorRule.js";
-import { buildContext, chainFor, describeScope, dirOf, isAncestorOrSelf } from "./shared.js";
+import {
+  buildContext,
+  chainFor,
+  describeScope,
+  dirOf,
+  globActivatesUnder,
+  isAncestorOrSelf,
+} from "./shared.js";
 
 function cursorRuleDir(surfacePath: string): string {
   // "packages/web/.cursor/rules/x.mdc" attaches to "packages/web".
   const idx = surfacePath.indexOf(".cursor/rules/");
   if (idx <= 0) return ".";
   return surfacePath.slice(0, idx - 1);
-}
-
-function globActivatesUnder(glob: string, directory: string, index: RepoIndex): boolean {
-  const re = globToRegExp(glob);
-  const prefix = directory === "." ? "" : `${directory}/`;
-  return index.files.some((f) => f.startsWith(prefix) && re.test(f));
 }
 
 /**

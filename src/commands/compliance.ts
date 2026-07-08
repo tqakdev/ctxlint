@@ -1,7 +1,11 @@
 import path from "node:path";
 import pc from "picocolors";
 import { VerdictCache } from "../compliance/cache.js";
-import { agreementReport, pickCalibrationSample } from "../compliance/calibrate.js";
+import {
+  agreementReport,
+  pickCalibrationPairs,
+  pickCalibrationSample,
+} from "../compliance/calibrate.js";
 import {
   anthropicJudgeClient,
   type CostEstimate,
@@ -122,10 +126,23 @@ export async function runCompliance(
   await cache.load();
 
   const cost = estimateCost(pairs, cache, config.compliance.model);
-  if (cost.usd > config.compliance.spendCapUsd && !options.yes) {
+  // --calibrate re-judges a sample with a (pricier) second model; that spend
+  // must count against the cap too. The actual sample is drawn from judged
+  // pairs later, so estimate against the same every-k-th pick over all pairs.
+  let calibrationCache: VerdictCache | undefined;
+  let capUsd = cost.usd;
+  if (options.calibrate) {
+    calibrationCache = new VerdictCache(
+      path.join(root, CACHE_DIR, "compliance-cache-calibration.json"),
+    );
+    await calibrationCache.load();
+    const presample = pickCalibrationPairs(pairs, config.compliance.calibrationSampleRatio);
+    capUsd += estimateCost(presample, calibrationCache, config.compliance.calibrationModel).usd;
+  }
+  if (capUsd > config.compliance.spendCapUsd && !options.yes) {
     return {
       status: "over-cap",
-      message: `estimated spend $${cost.usd.toFixed(4)} exceeds the $${config.compliance.spendCapUsd.toFixed(2)} cap — re-run with --yes to proceed, or raise compliance.spendCapUsd.`,
+      message: `estimated spend $${capUsd.toFixed(4)}${options.calibrate ? " (including calibration)" : ""} exceeds the $${config.compliance.spendCapUsd.toFixed(2)} cap — re-run with --yes to proceed, or raise compliance.spendCapUsd.`,
       cost,
       reports: [],
       deadRules,
@@ -195,15 +212,11 @@ export async function runCompliance(
     judged,
   };
 
-  if (options.calibrate) {
+  if (options.calibrate && calibrationCache) {
     const calibrationSample = pickCalibrationSample(
       judged,
       config.compliance.calibrationSampleRatio,
     );
-    const calibrationCache = new VerdictCache(
-      path.join(root, CACHE_DIR, "compliance-cache-calibration.json"),
-    );
-    await calibrationCache.load();
     const secondary = await judgePairs(
       calibrationSample,
       deps.calibrationClient ?? deps.client,

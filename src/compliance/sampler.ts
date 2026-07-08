@@ -26,7 +26,7 @@ export type SampleError = { error: string };
  * this rule follow this rule" is meaningless and pollutes applicability).
  */
 const SKIP_FILE =
-  /(^|\/)(package-lock\.json|pnpm-lock\.yaml|yarn\.lock|Cargo\.lock|composer\.lock|go\.sum)$|(^|\/)(node_modules|vendor|dist|build|out|coverage|\.next|__generated__)\/|\.(min\.js|map|snap|lock)$|(^|\/)(AGENTS\.md|CLAUDE\.md|SKILL\.md|\.cursorrules)$|(^|\/)\.cursor\/rules\/[^/]+\.mdc$|^\.github\/copilot-instructions\.md$/;
+  /(^|\/)(package-lock\.json|pnpm-lock\.yaml|yarn\.lock|Cargo\.lock|composer\.lock|go\.sum)$|(^|\/)(node_modules|vendor|dist|build|out|coverage|\.next|__generated__)\/|\.(min\.js|map|snap|lock)$|(^|\/)(AGENTS\.md|CLAUDE\.md|SKILL\.md|\.cursorrules|\.windsurfrules)$|(^|\/)\.cursor\/rules\/[^/]+\.mdc$|(^|\/)\.windsurf\/rules\/[^/]+\.md$|^\.github\/copilot-instructions\.md$/;
 
 export const MAX_CHUNK_TOKENS = 4000;
 

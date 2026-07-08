@@ -55,18 +55,45 @@ describe("fix planner", () => {
     ).toBe(true);
   });
 
-  it("plans a path update only when git history has a unique rename target", async () => {
+  it("plans a path update only for a unique rename target that still exists", async () => {
     const result = await runScan({ root: path.join(fixtures, "messy-repo"), userGlobalDir: null });
-    const unique = new Map([["src/utils/date-helpers.js", ["src/utils/dates.js"]]]);
+    const unique = new Map([["src/utils/date-helpers.js", ["src/utils/helpers.js"]]]);
     const plan = planFixes(result, unique);
     const updates = plan.fixes.filter((f) => f.kind === "update-path" && f.safe);
     expect(updates).toHaveLength(1);
-    expect(updates[0]?.edits[0]?.replaceWith).toBe("src/utils/dates.js");
+    expect(updates[0]?.edits[0]?.find).toBe("src/utils/date-helpers.js");
+    expect(updates[0]?.edits[0]?.replaceWith).toBe("src/utils/helpers.js");
 
     const ambiguous = new Map([["src/utils/date-helpers.js", ["a.js", "b.js"]]]);
     expect(
       planFixes(result, ambiguous).fixes.filter((f) => f.kind === "update-path" && f.safe),
     ).toHaveLength(0);
+
+    // git log --all sees abandoned branches: a unique rename target that no
+    // longer exists in the tree must never be written into the file.
+    const vanished = new Map([["src/utils/date-helpers.js", ["src/utils/dates.js"]]]);
+    expect(
+      planFixes(result, vanished).fixes.filter((f) => f.kind === "update-path" && f.safe),
+    ).toHaveLength(0);
+  });
+
+  it("never rewrites a rule's live references, only the stale one the finding is about", async () => {
+    const dir = await mkdtemp(path.join(tmpdir(), "ctxlint-liveref-"));
+    await mkdir(path.join(dir, "lib"), { recursive: true });
+    await writeFile(path.join(dir, "lib/current.js"), "module.exports = 1;\n", "utf8");
+    await writeFile(path.join(dir, "lib/renamed.js"), "module.exports = 2;\n", "utf8");
+    await writeFile(
+      path.join(dir, "CLAUDE.md"),
+      "# app\n\n- Helpers live in `lib/current.js` and `lib/gone.js`; import from there.\n",
+      "utf8",
+    );
+    const result = await runScan({ root: dir, userGlobalDir: null });
+    // Rename history exists for the rule's LIVE ref (recreated later) — the
+    // old planner rewrote it anyway; the stale ref is what the finding names.
+    const renames = new Map([["lib/current.js", ["lib/renamed.js"]]]);
+    const plan = planFixes(result, renames);
+    expect(plan.fixes.filter((f) => f.kind === "update-path" && f.safe)).toHaveLength(0);
+    expect(plan.fixes.some((f) => f.kind === "update-path" && !f.safe)).toBe(true);
   });
 });
 

@@ -1,4 +1,13 @@
+import type { RepoIndex } from "../discovery.js";
+import { globToRegExp } from "../glob.js";
 import type { EffectiveContext, EffectiveContextEntry, Surface, ToolId } from "../model.js";
+
+/** Does `glob` match any indexed file under `directory`? (Activation check.) */
+export function globActivatesUnder(glob: string, directory: string, index: RepoIndex): boolean {
+  const re = globToRegExp(glob);
+  const prefix = directory === "." ? "" : `${directory}/`;
+  return index.files.some((f) => f.startsWith(prefix) && re.test(f));
+}
 
 export function dirOf(surfacePath: string): string {
   const idx = surfacePath.lastIndexOf("/");

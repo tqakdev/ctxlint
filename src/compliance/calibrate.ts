@@ -6,20 +6,26 @@ import type { JudgedPair, JudgePair } from "./judge.js";
  * as directional only — this honesty check is the product's credibility.
  */
 
-/** Every k-th judged pair (sorted for determinism), at least one. */
-export function pickCalibrationSample(pairs: JudgedPair[], ratio: number): JudgePair[] {
-  const judged = pairs.filter((p) => p.verdict !== undefined);
-  if (judged.length === 0) return [];
-  const sorted = [...judged].sort((a, b) =>
+/** Every k-th pair (sorted for determinism), at least one when non-empty. */
+export function pickCalibrationPairs<T extends JudgePair>(pairs: T[], ratio: number): T[] {
+  if (pairs.length === 0) return [];
+  const sorted = [...pairs].sort((a, b) =>
     `${a.rule.id}|${a.chunk.id}`.localeCompare(`${b.rule.id}|${b.chunk.id}`),
   );
   const step = Math.max(1, Math.floor(1 / Math.max(ratio, 0.0001)));
-  const sample: JudgePair[] = [];
+  const sample: T[] = [];
   for (let i = 0; i < sorted.length; i += step) {
-    const { rule, chunk } = sorted[i] as JudgedPair;
-    sample.push({ rule, chunk });
+    sample.push(sorted[i] as T);
   }
   return sample;
+}
+
+/** Every k-th judged pair (sorted for determinism), at least one. */
+export function pickCalibrationSample(pairs: JudgedPair[], ratio: number): JudgePair[] {
+  return pickCalibrationPairs(
+    pairs.filter((p) => p.verdict !== undefined),
+    ratio,
+  ).map(({ rule, chunk }) => ({ rule, chunk }));
 }
 
 export interface AgreementReport {

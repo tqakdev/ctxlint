@@ -87,6 +87,23 @@ describe("sampler", () => {
     expect(files).not.toContain("package-lock.json");
   }, 30000);
 
+  it("skips context surfaces themselves, including windsurf rule files", async () => {
+    const dir = await makeRepo();
+    await commitFile(dir, "src/a.js", "const a = 1;\n", "add a");
+    await commitFile(dir, ".windsurfrules", "- Always test.\n", "windsurf legacy");
+    await commitFile(dir, ".windsurf/rules/web.md", "---\ntrigger: always_on\n---\n- x\n", "rule");
+    await commitFile(dir, "AGENTS.md", "- Always test.\n", "agents");
+
+    const sample = await sampleCommits(dir, 10);
+    expect("error" in sample).toBe(false);
+    if ("error" in sample) return;
+    const files = sample.chunks.flatMap((c) => c.files);
+    expect(files).toContain("src/a.js");
+    expect(files).not.toContain(".windsurfrules");
+    expect(files).not.toContain(".windsurf/rules/web.md");
+    expect(files).not.toContain("AGENTS.md");
+  }, 30000);
+
   it("degrades gracefully outside a git repository", async () => {
     const dir = await mkdtemp(path.join(tmpdir(), "ctxlint-nogit-"));
     const sample = await sampleCommits(dir, 10);

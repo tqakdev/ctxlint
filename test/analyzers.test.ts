@@ -174,4 +174,15 @@ describe("glob mini-matcher", () => {
     expect(globMatchesAny("*.test.ts", ["src/lib/db.test.ts"])).toBe(true);
     expect(globMatchesAny("*.test.ts", ["src/lib/db.ts"])).toBe(false);
   });
+
+  it("handles {a,b} alternation as used in .mdc frontmatter globs", () => {
+    expect(globToRegExp("src/**/*.{ts,tsx}").test("src/a/b.ts")).toBe(true);
+    expect(globToRegExp("src/**/*.{ts,tsx}").test("src/a/b.tsx")).toBe(true);
+    expect(globToRegExp("src/**/*.{ts,tsx}").test("src/a/b.js")).toBe(false);
+    expect(globMatchesAny("*.{yml,yaml}", ["ci/deploy.yaml"])).toBe(true);
+    // Nested alternation and dots inside alternatives stay literal.
+    expect(globToRegExp("*.{spec,test}.{js,ts}").test("db.test.ts")).toBe(true);
+    // An unclosed brace is a literal character, not a parse failure.
+    expect(globToRegExp("weird{name.ts").test("weird{name.ts")).toBe(true);
+  });
 });

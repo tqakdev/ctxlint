@@ -82,9 +82,10 @@ export function analyzeStructure(surfaces: Surface[], rules: Rule[]): Finding[] 
   }
 
   // 4. Rules that point teammates at user-global config they cannot see.
+  const surfacesById = new Map(surfaces.map((s) => [s.id, s]));
   for (const rule of rules) {
     if (!rule.text.includes("~/.claude/")) continue;
-    const surface = surfaces.find((s) => s.id === rule.surfaceId);
+    const surface = surfacesById.get(rule.surfaceId);
     if (!surface || surface.scope === "user-global") continue;
     findings.push({
       ruleIds: [rule.id],
