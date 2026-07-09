@@ -99,6 +99,26 @@ behavior the stale assumption is visible instead of silently wrong.
 | `--ci` | exit 1 when error-severity findings exist |
 | `--max-files <n>` | cap the discovery walk on huge monorepos |
 | `--no-user-global` | ignore `~/.claude/CLAUDE.md` (also on `fix`) — by default it counts as real context, which means findings can differ per machine; pass this in CI |
+| `--write-baseline` | accept every current finding into `.ctxlint-baseline.json`; later scans (and `--ci`) fail only on new findings |
+| `--watch` | re-scan whenever files change (Ctrl-C to stop) |
+
+#### Adopting on a repo with existing findings
+
+Don't fix 40 findings before you're allowed to turn the gate on:
+
+```sh
+ctxlint scan --write-baseline   # accept today's findings; commit .ctxlint-baseline.json
+ctxlint scan --ci               # green — fails only when NEW findings appear
+```
+
+Baseline entries are content-hashed, so reformatting and moving lines don't
+invalidate them; entries whose findings you fix are reported as stale so the
+file shrinks over time. To permanently opt one rule out instead, mark it
+inline — findings that touch it are suppressed:
+
+```markdown
+- Legacy notes live in `docs/old-notes.md`. <!-- ctxlint-ignore -->
+```
 
 ### `ctxlint fix [path]` — autofix planner
 
@@ -263,16 +283,16 @@ Honesty section. Read this before trusting a number.
 Every finding ctxlint produces on seven pinned open-source repos (openai/codex,
 sst/opencode, All-Hands-AI/OpenHands, cline/cline, block/goose, vercel/ai,
 browser-use/browser-use — `bench/corpus.json`) is hand-labeled true/false
-positive against the actual checkout (`bench/labels.json`, 120 findings):
+positive against the actual checkout (`bench/labels.json`, 118 findings):
 
 | category | precision | tp / fp | notes |
 |---|---:|---|---|
 | budget | 98% | 57 / 1 | token math is token math |
 | stale-reference | 91% | 52 / 5 | the flagship analyzer |
 | duplication | 100% | 2 / 0 | small sample |
-| contradiction | 33% | 1 / 2 | small sample — being reworked |
+| contradiction | 100% | 1 / 0 | small sample; scoped exceptions ("When X, use Y") no longer fire |
 | structure | — | 0 / 0 | all earlier fps fixed |
-| **overall** | **93%** | **112 / 8** | |
+| **overall** | **94.9%** | **112 / 6** | |
 
 The first labeling pass measured 67% overall (stale-reference 52%). Instead of
 publishing that and moving on, the labeled false positives became the fix list:
@@ -290,6 +310,24 @@ Reproduce with `pnpm bench` (clones the pinned SHAs, ~200 MB); `pnpm bench
 --check` fails if analyzer output drifts from the committed snapshots. Labels
 are re-audited whenever a snapshot changes — precision claims stay tied to
 the exact code that earns them.
+
+### Recall (seeded defects)
+
+Precision says "what we flag is real"; recall asks "when a defect exists, do
+we flag it?". `pnpm bench:recall` synthesizes defects with known ground truth
+on the same corpus — deleting the target of a reference that resolves today,
+planting verbatim and one-word-mutated copies of real rules — and measures
+what the analyzers catch:
+
+| seed class | recall | caught / seeded | what the misses are |
+|---|---:|---|---|
+| stale-reference | 89% | 64 / 72 | slash-less basenames (`README.md`, `package.json`) that the basename-anywhere heuristic keeps resolving — the deliberate price of its precision |
+| duplication (verbatim copy) | 100% | 42 / 42 | |
+| drift (one word changed) | 31% | 13 / 42 | the 0.6 shingle-Jaccard floor only catches one-word divergence in long rules (~24+ words); short-rule drift is a known blind spot |
+
+Caveat: seeds come from references the extractor already found, so this
+measures resolution/detection recall, not extraction recall. Both numbers ship
+so the trade-offs are visible instead of implied.
 
 ## Development
 

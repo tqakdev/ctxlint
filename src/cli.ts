@@ -30,6 +30,11 @@ export function buildProgram(): Command {
       "--no-user-global",
       "ignore ~/.claude/CLAUDE.md so results don't depend on the machine (CI)",
     )
+    .option(
+      "--write-baseline",
+      "accept every current finding into .ctxlint-baseline.json; later scans fail only on new findings",
+    )
+    .option("--watch", "re-scan whenever files change (Ctrl-C to stop)")
     .action(async (targetPath: string | undefined, options) => {
       const { scanCommand } = await import("./commands/scan.js");
       await scanCommand(targetPath, options);

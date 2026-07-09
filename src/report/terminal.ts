@@ -107,6 +107,17 @@ export function renderTerminal(data: ReportData): string {
       lines.push(pc.dim(`      ${evidenceLine}`));
     }
   }
+  if (data.baseline && data.baseline.suppressed + data.baseline.stale > 0) {
+    lines.push(
+      pc.dim(
+        `  ${data.baseline.suppressed} accepted finding(s) hidden by .ctxlint-baseline.json${
+          data.baseline.stale > 0
+            ? `; ${data.baseline.stale} baseline entr${data.baseline.stale === 1 ? "y" : "ies"} no longer match (fixed) — refresh with scan --write-baseline`
+            : ""
+        }`,
+      ),
+    );
+  }
   lines.push("");
   lines.push(pc.dim(`Token counts: ${data.tokenNote}.`));
   if (data.toolBehavior.length > 0) {

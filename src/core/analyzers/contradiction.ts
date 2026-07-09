@@ -79,6 +79,25 @@ export function sentencePolarity(sentence: string): Polarity {
   return "none";
 }
 
+const CONDITIONAL_OPENER = /\b(?:when|if|where)\b/i;
+
+/**
+ * A directive whose polarity marker sits inside a LEADING conditional clause
+ * ("When you want omission to mean false, use skip_serializing_if …") is a
+ * deliberate scoped exception to a nearby rule, not a contradiction — both
+ * benchmark false positives had this shape. Trailing scopes are kept:
+ * "Never use named exports for components" still contradicts "Always use
+ * named exports". Sentences starting with "Exception" are exceptions by
+ * declaration.
+ */
+export function isScopedException(sentence: string): boolean {
+  if (/^\s*exceptions?\b/i.test(sentence)) return true;
+  const conditional = CONDITIONAL_OPENER.exec(sentence);
+  if (!conditional) return false;
+  const marker = new RegExp(`${NEGATIVE.source}|${POSITIVE.source}`, "i").exec(sentence);
+  return marker !== null && conditional.index < marker.index;
+}
+
 function contentBigrams(words: readonly string[]): Set<string> {
   const filtered = words.filter((w) => !STOPWORDS.has(w) && !POLARITY_WORDS.has(w));
   const out = new Set<string>();
@@ -141,7 +160,9 @@ export function analyzeContradiction(
             bigrams: directiveCore(sentence),
           }),
         )
-        .filter((s) => s.polarity !== "none" && s.bigrams.size > 0),
+        .filter(
+          (s) => s.polarity !== "none" && s.bigrams.size > 0 && !isScopedException(s.sentence),
+        ),
     }))
     .filter((p) => p.sentences.length > 0)
     .map((p) => ({ ...p, ruleShingles: shingles(normalizeWords(p.rule.text)) }));

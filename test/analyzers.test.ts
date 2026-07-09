@@ -52,6 +52,39 @@ describe("M2 acceptance: messy-repo triggers every static finding category", () 
     expect(findings.some((f) => f.evidence.includes("canary window"))).toBe(false);
   });
 
+  it("contradiction: a leading-conditional scoped exception does not fire (benchmark fp)", async () => {
+    const { analyzeContradiction, isScopedException } = await import(
+      "../src/core/analyzers/contradiction.js"
+    );
+    // Shape of the codex AGENTS.md false positive: a blanket "never" rule and
+    // a deliberate exception scoped by a leading "When …" clause.
+    const rule = (id: string, text: string) => ({
+      id,
+      surfaceId: id,
+      text,
+      section: [],
+      span: { startLine: 1, endLine: 1 },
+      kind: "imperative" as const,
+      referencedPaths: [],
+    });
+    const surfaces = new Map();
+    const pair = [
+      rule("a", "Do not use skip_serializing_if on v2 payload fields."),
+      rule(
+        "b",
+        "When you want omission to mean false for boolean fields, use serde default skip_serializing_if over Option bool.",
+      ),
+    ];
+    expect(analyzeContradiction(pair, surfaces, 5000)).toEqual([]);
+    // Trailing scopes still contradict — the flagship example must keep firing.
+    const flagship = [
+      rule("c", "Always use named exports in shared modules."),
+      rule("d", "Never use named exports for React components."),
+    ];
+    expect(analyzeContradiction(flagship, surfaces, 5000).length).toBe(1);
+    expect(isScopedException("Exception: config RPC payloads use snake_case.")).toBe(true);
+  });
+
   it("stale-reference: every planted missing path/script is an error; prose slashes are not", async () => {
     const findings = ofCategory(await messy(), "stale-reference");
     const messages = findings.map((f) => f.message).join("\n");

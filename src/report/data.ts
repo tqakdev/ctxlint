@@ -51,6 +51,8 @@ export interface ReportData {
     lastVerified: string;
     assumptions: string[];
   }[];
+  /** Set when a .ctxlint-baseline.json filtered the findings below. */
+  baseline?: { suppressed: number; stale: number };
   findings: ReportFinding[];
 }
 

@@ -41,6 +41,43 @@ export interface ScanResult {
   tokens: { method: "estimated" | "exact+estimated"; label: string };
 }
 
+/** A line that is nothing but the ignore marker (the "line above" form). */
+const IGNORE_LINE = /^\s*<!--\s*ctxlint-ignore\s*-->\s*$/;
+
+/**
+ * Rules opted out with an inline `<!-- ctxlint-ignore -->` marker — on the
+ * rule's own line(s), or standing alone on the line directly above (the
+ * standalone form is strict so a marker on an adjacent list item never leaks
+ * to its neighbor). Findings touching an ignored rule are dropped before
+ * scoring; surface-level findings (budget, structure) have no rule line to
+ * mark and are handled by the baseline instead.
+ */
+function collectIgnoredRuleIds(rules: Rule[], surfaces: Map<string, Surface>): Set<string> {
+  const ignored = new Set<string>();
+  const linesBySurface = new Map<string, string[]>();
+  for (const rule of rules) {
+    const surface = surfaces.get(rule.surfaceId);
+    if (!surface) continue;
+    let lines = linesBySurface.get(surface.id);
+    if (!lines) {
+      lines = surface.raw.split("\n");
+      linesBySurface.set(surface.id, lines);
+    }
+    const above = lines[rule.span.startLine - 2];
+    if (above !== undefined && IGNORE_LINE.test(above)) {
+      ignored.add(rule.id);
+      continue;
+    }
+    for (let i = rule.span.startLine - 1; i < Math.min(lines.length, rule.span.endLine); i++) {
+      if ((lines[i] as string).includes("ctxlint-ignore")) {
+        ignored.add(rule.id);
+        break;
+      }
+    }
+  }
+  return ignored;
+}
+
 export async function runScan(options: ScanOptions): Promise<ScanResult> {
   let rootStat: Stats;
   try {
@@ -82,6 +119,7 @@ export async function runScan(options: ScanOptions): Promise<ScanResult> {
   const effectiveContexts = resolveAll(surfaces, index);
 
   const surfacesById = new Map(surfaces.map((s) => [s.id, s]));
+  const ignoredRuleIds = collectIgnoredRuleIds(rules, surfacesById);
   const findings: Finding[] = [
     ...discoveryFindings,
     ...parseFindings,
@@ -90,7 +128,9 @@ export async function runScan(options: ScanOptions): Promise<ScanResult> {
     ...analyzeStaleness(rules, surfacesById, index),
     ...analyzeBudget(surfaces, rules, effectiveContexts, config.budgets),
     ...analyzeStructure(surfaces, rules),
-  ].sort(compareFindings);
+  ]
+    .filter((finding) => !finding.ruleIds.some((id) => ignoredRuleIds.has(id)))
+    .sort(compareFindings);
 
   return {
     root: options.root,

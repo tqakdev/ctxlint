@@ -58,6 +58,46 @@ function basesFor(dir: string, ruleText: string): string[] {
   return [...new Set(bases)];
 }
 
+/**
+ * All bases a rule's references resolve against: surface dir, ancestors, cd
+ * contexts, plus the conventional src/ fallback under each. Exported so the
+ * recall benchmark exercises the exact resolution the analyzer uses.
+ */
+export function refBases(dir: string, ruleText: string, facts: RepoFacts): string[] {
+  const bases = basesFor(dir, ruleText);
+  for (const base of [...bases]) {
+    const srcDir = base === "." ? "src" : `${base}/src`;
+    if (facts.dirSet.has(srcDir)) bases.push(srcDir);
+  }
+  return bases;
+}
+
+/**
+ * The existing files a non-glob reference currently resolves to (exact match
+ * or extension completion, across every base). Empty = unresolved today.
+ */
+export function resolveRefTargets(
+  ref: string,
+  dir: string,
+  ruleText: string,
+  facts: RepoFacts,
+): string[] {
+  const targets = new Set<string>();
+  const completable = !HAS_EXTENSION.test(ref) && !ref.endsWith("/");
+  for (const base of refBases(dir, ruleText, facts)) {
+    const raw = base === "." ? ref : join(base, ref);
+    const candidate = normalizeSegments(raw.replace(/\/$/, ""));
+    if (candidate === null || candidate === "") continue;
+    if (facts.fileSet.has(candidate)) targets.add(candidate);
+    if (completable) {
+      for (const ext of COMPLETION_EXTENSIONS) {
+        if (facts.fileSet.has(candidate + ext)) targets.add(candidate + ext);
+      }
+    }
+  }
+  return [...targets];
+}
+
 /** Extensions tried for import-specifier-style refs ("./native-request"). */
 const COMPLETION_EXTENSIONS = [
   ".ts",
@@ -150,13 +190,9 @@ export function analyzeStaleness(
     const surface = surfaces.get(rule.surfaceId);
     if (!surface || surface.scope === "user-global") continue;
     const dir = surfaceDir(surface.path);
-    const bases = basesFor(dir, rule.text);
-    // Docs in package roots conventionally omit the src/ prefix
+    // Includes the conventional src/ fallback — docs in package roots omit it
     // ("protocols/utils/tool-stream.ts" for packages/llm/src/protocols/…).
-    for (const base of [...bases]) {
-      const srcDir = base === "." ? "src" : `${base}/src`;
-      if (facts.dirSet.has(srcDir)) bases.push(srcDir);
-    }
+    const bases = refBases(dir, rule.text, facts);
     for (const ref of rule.referencedPaths) {
       const weak =
         !ref.startsWith("npm run ") &&

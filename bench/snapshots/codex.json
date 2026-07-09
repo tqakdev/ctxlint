@@ -2,7 +2,7 @@
   "name": "codex",
   "repo": "openai/codex",
   "sha": "f1affbac5e5164b2bae825e9b39e9868bc4e0be2",
-  "score": 62,
+  "score": 65,
   "stats": {
     "surfaces": 2,
     "rules": 139
@@ -129,22 +129,10 @@
       "message": "generic-agents-md working in codex-rs/tui/src/bottom_pane loads ≈5304 estimated tokens of always-on context (budget: 4000) — that cost recurs on every request. Trim the files it loads: AGENTS.md (≈5183), codex-rs/tui/src/bottom_pane/AGENTS.md (≈121)."
     },
     {
-      "key": "77edd2886ad0",
-      "severity": "warn",
-      "category": "contradiction",
-      "message": "Contradictory instructions about the same thing: AGENTS.md:278-280 says one polarity, AGENTS.md:293-293 the opposite. An agent reading both will follow whichever it saw last — pick one. (Polarity heuristic is English-only.)"
-    },
-    {
       "key": "9ef84e78f98f",
       "severity": "warn",
       "category": "contradiction",
       "message": "Contradictory instructions about the same thing: AGENTS.md:291-291 says one polarity, AGENTS.md:292-292 the opposite. An agent reading both will follow whichever it saw last — pick one. (Polarity heuristic is English-only.)"
-    },
-    {
-      "key": "743aa7cfbb11",
-      "severity": "warn",
-      "category": "contradiction",
-      "message": "Contradictory instructions about the same thing: AGENTS.md:292-292 says one polarity, AGENTS.md:293-293 the opposite. An agent reading both will follow whichever it saw last — pick one. (Polarity heuristic is English-only.)"
     }
   ]
 }
