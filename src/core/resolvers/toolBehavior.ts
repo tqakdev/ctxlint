@@ -27,6 +27,7 @@ export const TOOL_BEHAVIOR: Record<ToolId, ToolBehavior> = {
     assumptions: [
       ".mdc rules with neither alwaysApply nor globs are agent-requested only",
       "legacy .cursorrules is deprecated and no longer loaded",
+      "nested rule globs match against both repo-relative and rule-directory-relative paths (docs don't specify the base)",
     ],
   },
   copilot: {
@@ -46,6 +47,7 @@ export const TOOL_BEHAVIOR: Record<ToolId, ToolBehavior> = {
     assumptions: [
       "trigger frontmatter semantics (manual/model/glob/always) for .windsurf/rules/*.md",
       "rules without an always trigger load on demand only",
+      "nested rule globs match against both repo-relative and rule-directory-relative paths (docs don't specify the base)",
     ],
   },
   "generic-agents-md": {

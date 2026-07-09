@@ -50,7 +50,8 @@ export function resolveWindsurf(
     } else if (meta.trigger === "always_on") {
       entries.push({ surface, reason: "trigger: always_on" });
     } else if (meta.trigger === "glob" && meta.globs && meta.globs.length > 0) {
-      const active = meta.globs.some((g) => globActivatesUnder(g, directory, index));
+      const ruleDir = windsurfRuleDir(surface.path);
+      const active = meta.globs.some((g) => globActivatesUnder(g, ruleDir, directory, index));
       entries.push({
         surface,
         reason: active

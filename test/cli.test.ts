@@ -24,9 +24,9 @@ describe("ctxlint CLI skeleton", () => {
       program.commands.find((c) => c.name() === cmd)?.options.map((o) => o.long) ?? [];
 
     expect(optionNames("scan")).toEqual(
-      expect.arrayContaining(["--format", "--output", "--ci", "--max-files"]),
+      expect.arrayContaining(["--format", "--output", "--ci", "--max-files", "--no-user-global"]),
     );
-    expect(optionNames("fix")).toContain("--write");
+    expect(optionNames("fix")).toEqual(expect.arrayContaining(["--write", "--no-user-global"]));
     expect(optionNames("compliance")).toEqual(
       expect.arrayContaining(["--commits", "--calibrate", "--yes"]),
     );

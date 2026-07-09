@@ -1,3 +1,5 @@
+import { mkdir, mkdtemp, writeFile } from "node:fs/promises";
+import { tmpdir } from "node:os";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { describe, expect, it } from "vitest";
@@ -90,6 +92,45 @@ describe("monorepo subtree resolution", () => {
     for (const context of result.effectiveContexts) {
       expect(context.surfaces.some((e) => e.surface.kind === "skill")).toBe(false);
     }
+  });
+});
+
+describe("nested rule glob activation", () => {
+  it("activates nested .mdc globs under both repo-relative and rule-dir-relative readings", async () => {
+    const dir = await mkdtemp(path.join(tmpdir(), "ctxlint-nested-"));
+    await mkdir(path.join(dir, "packages/web/.cursor/rules"), { recursive: true });
+    await mkdir(path.join(dir, "packages/web/src"), { recursive: true });
+    // Rule-dir-relative glob: no packages/web/ prefix — the reading Cursor's
+    // docs don't rule out and repo-relative matching alone would miss.
+    await writeFile(
+      path.join(dir, "packages/web/.cursor/rules/web.mdc"),
+      '---\ndescription: web\nglobs: ["src/**/*.tsx"]\nalwaysApply: false\n---\n- Keep components pure.\n',
+      "utf8",
+    );
+    await writeFile(path.join(dir, "packages/web/src/app.tsx"), "export const x = 1;\n", "utf8");
+
+    const result = await runScan({ root: dir, userGlobalDir: null });
+    const context = result.effectiveContexts.find(
+      (c) => c.tool === "cursor" && c.directory === "packages/web",
+    );
+    const entry = context?.surfaces.find(
+      (e) => e.surface.path === "packages/web/.cursor/rules/web.mdc",
+    );
+    expect(entry).toBeDefined();
+    expect(entry?.conditional).toBe(true);
+    expect(entry?.reason).toContain("activates for files matching");
+
+    // A glob matching nothing under either reading still says so.
+    await writeFile(
+      path.join(dir, "packages/web/.cursor/rules/none.mdc"),
+      '---\nglobs: ["nothing/**"]\nalwaysApply: false\n---\n- Never applies.\n',
+      "utf8",
+    );
+    const rescan = await runScan({ root: dir, userGlobalDir: null });
+    const none = rescan.effectiveContexts
+      .find((c) => c.tool === "cursor" && c.directory === "packages/web")
+      ?.surfaces.find((e) => e.surface.path === "packages/web/.cursor/rules/none.mdc");
+    expect(none?.reason).toContain("match nothing");
   });
 });
 

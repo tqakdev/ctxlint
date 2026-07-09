@@ -26,12 +26,16 @@ describe("versioned tool-behavior data", () => {
     expect(TOOL_BEHAVIOR.cursor.assumptions.length).toBeGreaterThan(0);
   });
 
-  it("surfaces behavior provenance in the report for tools present in the scan", async () => {
+  it("surfaces behavior provenance only for tools that load at least one surface", async () => {
     const result = await runScan({ root: path.join(fixtures, "clean-repo"), userGlobalDir: null });
     const data = buildReportData(result);
     expect(data.toolBehavior.length).toBeGreaterThan(0);
-    const toolsInScan = new Set(data.effectiveContexts.map((c) => c.tool));
-    expect(new Set(data.toolBehavior.map((b) => b.tool))).toEqual(toolsInScan);
+    const toolsLoading = new Set(
+      data.effectiveContexts.filter((c) => c.entries.length > 0).map((c) => c.tool),
+    );
+    expect(new Set(data.toolBehavior.map((b) => b.tool))).toEqual(toolsLoading);
+    // clean-repo has no windsurf files — no provenance row for windsurf.
+    expect(data.toolBehavior.some((b) => b.tool === "windsurf")).toBe(false);
     for (const entry of data.toolBehavior) {
       expect(entry.docsUrl).toMatch(/^https:\/\//);
       expect(entry.lastVerified).toMatch(/^\d{4}-\d{2}-\d{2}$/);

@@ -77,6 +77,35 @@ describe("fix planner", () => {
     ).toHaveLength(0);
   });
 
+  it("treats userGlobalDir: null as disabled, not as 'use the real homedir'", async () => {
+    const dir = await mkdtemp(path.join(tmpdir(), "ctxlint-uglobal-"));
+    await writeFile(
+      path.join(dir, "CLAUDE.md"),
+      [
+        "# app",
+        "",
+        "- Always run the full test suite before pushing any change to this repository.",
+        "- Keep documentation in sync with code changes whenever public behavior shifts.",
+        "",
+      ].join("\n"),
+      "utf8",
+    );
+    // A fake user-global CLAUDE.md duplicating a repo rule drags the score
+    // down when included…
+    const fakeGlobal = await mkdtemp(path.join(tmpdir(), "ctxlint-fakehome-"));
+    await writeFile(
+      path.join(fakeGlobal, "CLAUDE.md"),
+      "- Always run the full test suite before pushing any change to this repository.\n",
+      "utf8",
+    );
+    const withGlobal = await runFix(dir, { write: false, userGlobalDir: fakeGlobal });
+    const withoutGlobal = await runFix(dir, { write: false, userGlobalDir: null });
+    expect(withGlobal.scoreBefore).toBeLessThan(100);
+    // …and null must exclude user-global entirely (the old `??` fallback
+    // silently scanned the real ~/.claude instead).
+    expect(withoutGlobal.scoreBefore).toBe(100);
+  }, 30000);
+
   it("never rewrites a rule's live references, only the stale one the finding is about", async () => {
     const dir = await mkdtemp(path.join(tmpdir(), "ctxlint-liveref-"));
     await mkdir(path.join(dir, "lib"), { recursive: true });

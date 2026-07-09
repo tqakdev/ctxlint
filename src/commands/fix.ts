@@ -14,6 +14,8 @@ import {
 
 export interface FixCliOptions {
   write?: boolean;
+  /** Commander sets this false when --no-user-global is passed. */
+  userGlobal?: boolean;
 }
 
 export interface FixOutcome {
@@ -32,11 +34,13 @@ export async function runFix(
   options: { write: boolean; userGlobalDir?: string | null },
 ): Promise<FixOutcome> {
   const config = await loadConfig(root);
-  const before = await runScan({
-    root,
-    config,
-    userGlobalDir: options.userGlobalDir ?? path.join(os.homedir(), ".claude"),
-  });
+  // `null` means "explicitly disabled" and must stay null — `??` would swallow
+  // it and scan the real ~/.claude anyway. Only absence picks the default.
+  const userGlobalDir =
+    options.userGlobalDir === undefined
+      ? path.join(os.homedir(), ".claude")
+      : options.userGlobalDir;
+  const before = await runScan({ root, config, userGlobalDir });
 
   const renames = await buildRenameMap(root);
   const plan = planFixes(before, renames);
@@ -65,11 +69,7 @@ export async function runFix(
         outcome.applied.push(file);
       }
     }
-    const after = await runScan({
-      root,
-      config,
-      userGlobalDir: options.userGlobalDir ?? path.join(os.homedir(), ".claude"),
-    });
+    const after = await runScan({ root, config, userGlobalDir });
     outcome.scoreAfter = after.score.total;
   }
 
@@ -82,7 +82,10 @@ export async function fixCommand(
   options: FixCliOptions,
 ): Promise<void> {
   const root = path.resolve(targetPath ?? ".");
-  const outcome = await runFix(root, { write: options.write ?? false });
+  const outcome = await runFix(root, {
+    write: options.write ?? false,
+    ...(options.userGlobal === false ? { userGlobalDir: null } : {}),
+  });
 
   const safe = outcome.plan.fixes.filter((f) => f.safe).length;
   const suggestions = outcome.plan.fixes.length - safe;

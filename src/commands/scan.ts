@@ -15,6 +15,8 @@ export interface ScanCliOptions {
   output?: string;
   ci?: boolean;
   maxFiles?: string;
+  /** Commander sets this false when --no-user-global is passed. */
+  userGlobal?: boolean;
 }
 
 export const CACHE_DIR = ".ctxlint-cache";
@@ -59,7 +61,7 @@ export async function scanCommand(
     root,
     config,
     maxFiles,
-    userGlobalDir: path.join(os.homedir(), ".claude"),
+    userGlobalDir: options.userGlobal === false ? null : path.join(os.homedir(), ".claude"),
     exactCounter: await makeExactCounter(),
   });
 

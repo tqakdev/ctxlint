@@ -26,6 +26,10 @@ export function buildProgram(): Command {
     .option("--output <file>", "write the report to a file instead of stdout")
     .option("--ci", "exit with code 1 when error-severity findings exist")
     .option("--max-files <n>", "hard cap on files walked during discovery")
+    .option(
+      "--no-user-global",
+      "ignore ~/.claude/CLAUDE.md so results don't depend on the machine (CI)",
+    )
     .action(async (targetPath: string | undefined, options) => {
       const { scanCommand } = await import("./commands/scan.js");
       await scanCommand(targetPath, options);
@@ -35,6 +39,10 @@ export function buildProgram(): Command {
     .command("fix [path]")
     .description("plan autofixes from scan findings; apply only safe patches with --write")
     .option("--write", "apply safe patches (refuses to run on a dirty git tree)")
+    .option(
+      "--no-user-global",
+      "ignore ~/.claude/CLAUDE.md so results don't depend on the machine (CI)",
+    )
     .action(async (targetPath: string | undefined, options) => {
       const { fixCommand } = await import("./commands/fix.js");
       await fixCommand(targetPath, options);

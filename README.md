@@ -98,6 +98,7 @@ behavior the stale assumption is visible instead of silently wrong.
 | `--output <file>` | write the report to a file |
 | `--ci` | exit 1 when error-severity findings exist |
 | `--max-files <n>` | cap the discovery walk on huge monorepos |
+| `--no-user-global` | ignore `~/.claude/CLAUDE.md` (also on `fix`) — by default it counts as real context, which means findings can differ per machine; pass this in CI |
 
 ### `ctxlint fix [path]` — autofix planner
 
@@ -184,7 +185,7 @@ Catch broken context files before they land. Plain git hook — no extra depende
 # Only run when a context file is in the commit.
 if git diff --cached --name-only | grep -qE \
   '(^|/)(AGENTS|CLAUDE|SKILL)\.md$|\.cursor(rules)?(/|$)|\.mdc$|\.windsurf(rules)?(/|$)|copilot-instructions\.md$'; then
-  npx @tqakdev/ctxlint scan --ci || {
+  npx @tqakdev/ctxlint scan --ci --no-user-global || {
     echo "ctxlint: error-severity findings — fix them or commit with --no-verify" >&2
     exit 1
   }
@@ -194,11 +195,13 @@ fi
 With [husky](https://typicode.github.io/husky/):
 
 ```bash
-echo "npx @tqakdev/ctxlint scan --ci" > .husky/pre-commit
+echo "npx @tqakdev/ctxlint scan --ci --no-user-global" > .husky/pre-commit
 ```
 
 `--ci` exits 1 only on error-severity findings (stale references, cross-tool
-duplicates); warnings and infos never block a commit.
+duplicates); warnings and infos never block a commit. `--no-user-global` keeps
+the gate deterministic — without it, findings can involve your personal
+`~/.claude/CLAUDE.md`, which teammates' machines don't have.
 
 ## Configuration
 

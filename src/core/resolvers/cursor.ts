@@ -56,7 +56,8 @@ export function resolveCursor(
     } else if (meta.alwaysApply) {
       entries.push({ surface, reason: "alwaysApply: true" });
     } else if (meta.globs && meta.globs.length > 0) {
-      const active = meta.globs.some((g) => globActivatesUnder(g, directory, index));
+      const ruleDir = cursorRuleDir(surface.path);
+      const active = meta.globs.some((g) => globActivatesUnder(g, ruleDir, directory, index));
       entries.push({
         surface,
         reason: active

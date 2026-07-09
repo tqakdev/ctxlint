@@ -2,11 +2,27 @@ import type { RepoIndex } from "../discovery.js";
 import { globToRegExp } from "../glob.js";
 import type { EffectiveContext, EffectiveContextEntry, Surface, ToolId } from "../model.js";
 
-/** Does `glob` match any indexed file under `directory`? (Activation check.) */
-export function globActivatesUnder(glob: string, directory: string, index: RepoIndex): boolean {
+/**
+ * Does `glob` match any indexed file under `directory`? (Activation check.)
+ * For rules attached below the repo root, tool docs don't specify whether
+ * globs resolve against the repo root or the rule's own directory — so a
+ * glob activates under EITHER reading (recorded as an assumption in
+ * TOOL_BEHAVIOR). `ruleDir` is always an ancestor-or-self of `directory`.
+ */
+export function globActivatesUnder(
+  glob: string,
+  ruleDir: string,
+  directory: string,
+  index: RepoIndex,
+): boolean {
   const re = globToRegExp(glob);
   const prefix = directory === "." ? "" : `${directory}/`;
-  return index.files.some((f) => f.startsWith(prefix) && re.test(f));
+  const strip = ruleDir === "." ? 0 : ruleDir.length + 1;
+  return index.files.some((f) => {
+    if (!f.startsWith(prefix)) return false;
+    if (re.test(f)) return true;
+    return strip > 0 && f.startsWith(`${ruleDir}/`) && re.test(f.slice(strip));
+  });
 }
 
 export function dirOf(surfacePath: string): string {

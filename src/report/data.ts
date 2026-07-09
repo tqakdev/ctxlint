@@ -127,7 +127,11 @@ export function buildReportData(result: ScanResult, generatedAt = new Date()): R
         conditional: entry.conditional ?? false,
       })),
     })),
-    toolBehavior: [...new Set(result.effectiveContexts.map((c) => c.tool))].map((tool) => ({
+    // Only tools that actually load at least one surface — provenance for a
+    // tool that loads nothing is noise.
+    toolBehavior: [
+      ...new Set(result.effectiveContexts.filter((c) => c.surfaces.length > 0).map((c) => c.tool)),
+    ].map((tool) => ({
       tool,
       ...TOOL_BEHAVIOR[tool],
     })),
