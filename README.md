@@ -153,7 +153,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: tqakdev/ctxlint/action@main
+      - uses: tqakdev/ctxlint/action@action-v1
         with:
           fail-on-error: "true"   # gate the job on error-severity findings
           fail-on-score: "0"      # optionally require a minimum Context Health Score (0 disables)

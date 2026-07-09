@@ -13,7 +13,7 @@ inputs:
     required: false
     default: "."
   version:
-    description: "ctxlint version to run (npm dist-tag or exact version)"
+    description: "ctxlint version to run (npm dist-tag or exact version; 0.4.0 or later)"
     required: false
     default: "latest"
   fail-on-error:
@@ -41,8 +41,10 @@ runs:
       shell: bash
       working-directory: ${{ inputs.path }}
       run: |
-        npx --yes "@tqakdev/ctxlint@${{ inputs.version }}" scan --format md --output ctxlint-report.md
-        npx --yes "@tqakdev/ctxlint@${{ inputs.version }}" scan --format json --output ctxlint-report.json
+        # --no-user-global: a runner's ~/.claude (possible on self-hosted) must
+        # never influence CI results.
+        npx --yes "@tqakdev/ctxlint@${{ inputs.version }}" scan --no-user-global --format md --output ctxlint-report.md
+        npx --yes "@tqakdev/ctxlint@${{ inputs.version }}" scan --no-user-global --format json --output ctxlint-report.json
         errors="$(jq '[.findings[] | select(.severity == "error")] | length' ctxlint-report.json)"
         score="$(jq '.score.total' ctxlint-report.json)"
         echo "errors=${errors}" >> "$GITHUB_OUTPUT"
