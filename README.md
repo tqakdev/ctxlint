@@ -105,7 +105,9 @@ Writes `ctxlint-fixes.md` with every fix grouped into **safe** (auto-applicable)
 **suggestions** (need your judgment). `--write` applies only the safe set:
 
 1. delete exact duplicates, keeping the canonical copy (AGENTS.md ranks highest);
-2. update stale paths when git history shows a unique rename target;
+2. update stale paths when git history shows a unique rename target — and only
+   when that target still exists in the tree, and only the exact reference the
+   finding names (a rule's other, live paths are never touched);
 3. move buried critical rules to the front — only ones the author CAPITALIZED
    (NEVER/MUST/ALWAYS); lowercase judgment calls stay suggestions.
 
@@ -119,8 +121,8 @@ lockfiles/vendored/generated code, prefilters (rule, diff-chunk) pairs by file a
 keyword overlap, then asks a model for a strict-JSON verdict per pair:
 `followed | violated | not-applicable` with a one-line evidence quote.
 
-- **Spend cap**: total cost is estimated up front; anything above $1 (configurable)
-  requires `--yes`.
+- **Spend cap**: total cost — including `--calibrate`'s second-model sample — is
+  estimated up front; anything above $1 (configurable) requires `--yes`.
 - **Disk cache**: verdicts are keyed by (rule, chunk, model) so reruns are incremental
   and nearly free.
 - **Dead rules**: rules that apply to nothing across the sample are called out — they
@@ -243,6 +245,10 @@ Honesty section. Read this before trusting a number.
   behavior; where it's undocumented, the table says "(assumed)" instead of presenting
   a guess as fact. Legacy `.cursorrules` is treated as loaded by nothing (assumed);
   legacy `.windsurfrules` is treated as still read by Windsurf (deprecated format).
+  Cursor's `.mdc` frontmatter is read the way Cursor reads it: unquoted globs
+  (`globs: **/*.ts` — what Cursor's own editor writes) are not valid YAML but are
+  recovered, and `{ts,tsx}` brace globs activate correctly; only frontmatter no
+  tool could read is flagged as broken.
 - **Some heuristics are English-only.** Duplication/drift shingles work on any
   language; polarity-based contradiction detection only understands English
   always/never phrasing, and says so in each finding.
